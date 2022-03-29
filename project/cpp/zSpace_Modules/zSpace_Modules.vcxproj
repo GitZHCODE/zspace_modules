@@ -83,10 +83,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\cpp\headers\zSpace_kMeans.h" />
     <ClInclude Include="..\..\..\cpp\headers\zSpace_Planarise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\cpp\headers\zSpace_Modules.h" />
+    <ClCompile Include="..\..\..\cpp\source\zSpace_kMeans.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zSpace_Planarise.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
