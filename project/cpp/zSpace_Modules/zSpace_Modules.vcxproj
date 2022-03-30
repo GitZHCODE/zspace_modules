@@ -70,7 +70,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE; ZSPACE_UNREAL_INTEROP; %(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE; ZSPACE_UNREAL_INTEROP; ZSPACE_MODULES_DYNAMIC_LIBRARY; %(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(zspacecoreDir)/cpp/Depends/Armadillo;$(zspacecoreDir)/cpp/Depends;$(zspacecoreDir); $(zspacecoreDir)/cpp;$(solutionDir)/cpp</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>

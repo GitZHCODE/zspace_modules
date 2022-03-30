@@ -14,17 +14,6 @@
 
 namespace  zSpace
 {
-	ZSPACE_INLINE double quadPlanarityDeviation(int index, zPointArray &_vertexPositions, zInt2DArray& _polygons, zUtilsCore &_core)
-	{
-		
-		double uA, uB;
-		zPoint pA, pB;
-			
-		bool check = _core.line_lineClosestPoints(_vertexPositions[_polygons[index][0]], _vertexPositions[_polygons[index][2]], _vertexPositions[_polygons[index][1]], _vertexPositions[_polygons[index][3]], uA, uB, pA, pB);
-					
-		return  pA.distanceTo(pB);		
-		
-	}
 
 	ZSPACE_INLINE void computeFaceVolumes(zPointArray& _vertexPositions, zInt2DArray& _polygons, zInt2DArray& _triangles, zUtilsCore& _core, zPointArray& fCenters, zFloatArray& fVolumes)
 	{
@@ -218,9 +207,6 @@ namespace  zSpace
 	{
 		zUtilsCore core;
 
-		zDoubleArray deviations;
-		deviations.assign(numFaces, 10000);
-
 		if (updatetopology)
 		{
 			vertexPositions.clear();
@@ -258,12 +244,12 @@ namespace  zSpace
 			{
 				int num_triVerts = _triCounts[i];
 
-				for (int j = 0; j < num_triVerts; j++)
+				for (int j = 0; j < num_triVerts * 3; j++)
 				{
 					triangles[i].push_back(_triConnects[triconnectsCurrentIndex + j]);
 				}
 
-				triconnectsCurrentIndex += num_triVerts;
+				triconnectsCurrentIndex += num_triVerts * 3;
 			}
 
 			// create particles
@@ -334,6 +320,8 @@ namespace  zSpace
 				}
 			}
 
+			computeFaceNormals(vertexPositions, polygons, triangles, core, fNormals);
+
 		}
 
 		// output
@@ -345,9 +333,9 @@ namespace  zSpace
 			outVertexPositions[i * 3 + 2] = vertexPositions[i].z;
 		}
 
-		for (int i = 0; i < deviations.size(); i++)
+		for (int i = 0; i < fVolumes.size(); i++)
 		{
-			outDeviations[i] = deviations[i];
+			outDeviations[i] = fVolumes[i];
 		}
 	}
 }

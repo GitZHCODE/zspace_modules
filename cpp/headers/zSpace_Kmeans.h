@@ -34,16 +34,42 @@ namespace  zSpace
 	//--------------------------
 	//---- GLOBAL VARIABLES
 	//--------------------------
-		
+	
+	/*!<\brief minimum length of stream.*/
+	double* minLength;
+
+	/*!<\brief maximum length of stream.*/
+	double* maxLength;
+
+	/*!<\brief mean or average data.*/
+	double* means;
+
+	/*!<\brief mean or average data.*/
+	int* clusters;
 
 	//--------------------------
 	//---- METHOD
 	//--------------------------
 
-
-	extern "C" ZSPACE_MODULES void kMeansClustering(double* _data, int datastride, int numClusters, int numIterations, double* outClusters, double* outClusterCentroids);
+	/*! \brief This method computes & classifies the input data into input number of clusters using the K-Means Algorithm.
+	*
+	*	\param	[in]	_data					- input container of data. Collapsed 1D array of size numDataPoints * datastride. 
+	*	\param	[in]	numDataPoints			- input number of data points.
+	*	\param	[in]	datastride				- input stride of data ie number of features in a datapoint.
+	* 	\param	[in]	numClusters				- input number of clusters.
+	*  	\param	[in]	numIterations			- input number of iterations.
+	*  	\param	[out]	outClusters				- output cluster index per data point.
+	*  	\param	[out]	outClusterCentroids		- output cluster centroids/means.
+	*	\since version 0.0.4
+	*/
+	extern "C" ZSPACE_MODULES void kMeansClustering(double* _data, int numDataPoints, int datastride, int numClusters, int numIterations, int* outClusters, double* outClusterCentroids);
 
 }
 
+#if defined(ZSPACE_MODULES_DYNAMIC_LIBRARY)
+// All defined OK so do nothing
+#else
+#include<source/zSpace_kMeans.cpp>
+#endif
 
 #endif
