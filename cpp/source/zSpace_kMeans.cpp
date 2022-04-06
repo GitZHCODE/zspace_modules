@@ -19,30 +19,43 @@ namespace  zSpace
 		zUtilsCore core;
 
 		// get min max value of the datapoints
-		float minVal = 1000000;		
-		float maxVal = -1000000;
+		
+		vector<zDomainFloat> minMax;
+		minMax.assign(datastride, zDomainFloat());
 
-		for (int i = 0; i < numDataPoints * datastride; i++)
+		for (int j = 0; j < datastride; j++)
 		{
-			if (_data[i] < minVal) minVal = _data[i];
+			minMax[j].min = std::numeric_limits<float>::max();
+			minMax[j].max = std::numeric_limits<float>::min();
+		}
+
+		for (int i = 0; i < numDataPoints; i++)
+		{
+			for (int j = 0; j < datastride; j++)
+			{
+				if (_data[i * datastride + j] < minMax[j].min) minMax[j].min = _data[i * datastride + j];
+
+				if (_data[i * datastride + j] > minMax[j].max) minMax[j].max = _data[i * datastride + j];
+			}
 			
-			if (_data[i] > maxVal) maxVal = _data[i];			
 		}
 
 		// Initialise means
-		means = new double[numClusters * datastride];
+		int meanSize = numClusters * datastride;
+		double*  means = new double[meanSize];
 		srand(time(NULL));
 		for (int i = 0; i < numClusters; i++)
 		{				
 			for (int j = 0; j < datastride; j++)
-				means[i* datastride + j] = core.randomNumber_double(minVal, maxVal);
+				means[i* datastride + j] = core.randomNumber_double(minMax[j].min, minMax[j].max);
 			
 		}
 				
 		// Initialise container to store tempMeans, cluster counts and  clusterID
-		double* tempMeans = new double[numClusters * datastride];
+		
+		double* tempMeans = new double[meanSize];
 		int* clusterCounts = new int[numClusters];	
-		clusters = new int[numDataPoints];		
+		int* clusters = new int[numDataPoints];		
 		
 		
 		// Compute means
@@ -105,8 +118,14 @@ namespace  zSpace
 		}
 
 		std::copy(clusters, clusters + numDataPoints, outClusters);
-		std::copy(means, means + (numClusters * datastride), outClusterCentroids);
+		std::copy(means, means + (meanSize), outClusterCentroids);
 
+		// delete dynamic memory
+		delete[] means;
+		delete[] tempMeans;
+		delete[] clusterCounts;
+		delete[] clusters;
+	
 	}
 	
 }

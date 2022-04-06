@@ -269,7 +269,8 @@ namespace  zSpace
 			for (int i = 0; i < o_Particles.size(); i++)
 			{
 				fnParticles.push_back(zFnParticle(o_Particles[i]));
-			}
+			}		
+			
 
 		}
 

@@ -34,18 +34,6 @@ namespace  zSpace
 	//--------------------------
 	//---- GLOBAL VARIABLES
 	//--------------------------
-	
-	/*!<\brief minimum length of stream.*/
-	double* minLength;
-
-	/*!<\brief maximum length of stream.*/
-	double* maxLength;
-
-	/*!<\brief mean or average data.*/
-	double* means;
-
-	/*!<\brief mean or average data.*/
-	int* clusters;
 
 	//--------------------------
 	//---- METHOD
