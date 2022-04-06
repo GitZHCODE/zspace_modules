@@ -113,7 +113,7 @@ namespace  zSpace
 	*  	\param	[out]	outDeviations			- output container of planarity deviations per face/polygon.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES void planarise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool updatetopology, int numIterations, double tolerance, double* outVertexPositions, double* outDeviations);
+	extern "C" ZSPACE_MODULES void planarise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int* _fixedVertices, int numVerts, int numFaces, int numFixed, bool updatetopology, int numIterations, double tolerance, double* outVertexPositions, double* outDeviations);
 
 
 }

@@ -203,7 +203,7 @@ namespace  zSpace
 
 	}
 
-	ZSPACE_INLINE void planarise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool updatetopology, int numIterations, double tolerance, double* outVertexPositions, double* outDeviations)
+	ZSPACE_INLINE void planarise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int* _fixedVertices, int numVerts, int numFaces, int numFixed, bool updatetopology, int numIterations, double tolerance, double* outVertexPositions, double* outDeviations)
 	{
 		zUtilsCore core;
 
@@ -273,6 +273,25 @@ namespace  zSpace
 			
 
 		}
+
+
+		//check fixed vertices
+		if (_fixedVertices)
+		{
+			zIntArray fixedIndices;
+			fixedIndices.assign(numFixed, int());
+
+			for (int i = 0; i < numFixed; i++)
+			{
+				fixedIndices[i] = _fixedVertices[i];
+			}
+
+			for (auto i : fixedIndices)
+			{
+				fnParticles[i].setFixed(true);
+			}
+		}
+
 
 
 		bool exit = false;
