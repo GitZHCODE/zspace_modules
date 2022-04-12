@@ -358,5 +358,136 @@ namespace  zSpace
 			outDeviations[i] = fVolumes[i];
 		}
 	}
+
+	ZSPACE_INLINE void planarityDeviation(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool updatetopology, double* outDeviations)
+	{
+		zUtilsCore core;
+
+		if (updatetopology)
+		{
+			vertexPositions.clear();
+			vertexPositions.assign(numVerts, zPoint());
+
+			for (int i = 0; i < numVerts; i += 1)
+			{
+				vertexPositions[i].x = _vertexPositions[i * 3 + 0];
+				vertexPositions[i].y = _vertexPositions[i * 3 + 1];
+				vertexPositions[i].z = _vertexPositions[i * 3 + 2];
+
+			}
+
+			polygons.clear();
+			polygons.assign(numFaces, vector<int>());
+
+			int polyconnectsCurrentIndex = 0;
+			for (int i = 0; i < numFaces; i++)
+			{
+				int num_faceVerts = _polyCounts[i];
+
+				for (int j = 0; j < num_faceVerts; j++)
+				{
+					polygons[i].push_back(_polyConnects[polyconnectsCurrentIndex + j]);
+				}
+
+				polyconnectsCurrentIndex += num_faceVerts;
+			}
+
+			triangles.clear();
+			triangles.assign(numFaces, vector<int>());
+
+			int triconnectsCurrentIndex = 0;
+			for (int i = 0; i < numFaces; i++)
+			{
+				int num_triVerts = _triCounts[i];
+
+				for (int j = 0; j < num_triVerts * 3; j++)
+				{
+					triangles[i].push_back(_triConnects[triconnectsCurrentIndex + j]);
+				}
+
+				triconnectsCurrentIndex += num_triVerts * 3;
+			}
+		}
+
+		// compute face normals
+		zVectorArray fNormals;
+		computeFaceNormals(vertexPositions, polygons, triangles, core, fNormals);
+
+		zPointArray fCenters;
+		zFloatArray fVolumes;
+
+		//compute face volumes
+		computeFaceVolumes(vertexPositions, polygons, triangles, core, fCenters, fVolumes);
+
+		for (int i = 0; i < fVolumes.size(); i++)
+		{
+			outDeviations[i] = fVolumes[i];
+		}
+
+
+	}
+
+	ZSPACE_INLINE void quadPlanarityDeviation(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, bool updatetopology, double* outDeviations)
+	{
+		if (_vertexPositions && _polyCounts && _polyConnects && outDeviations)
+		{
+			zUtilsCore core;
+
+			zDoubleArray deviations;
+			deviations.assign(numFaces, 10000);
+
+			if (updatetopology)
+			{
+				vertexPositions.clear();
+				vertexPositions.assign(numVerts, zPoint());
+
+				for (int i = 0; i < numVerts; i += 1)
+				{
+					vertexPositions[i].x = _vertexPositions[i * 3 + 0];
+					vertexPositions[i].y = _vertexPositions[i * 3 + 1];
+					vertexPositions[i].z = _vertexPositions[i * 3 + 2];
+				}
+
+				polygons.clear();
+				polygons.assign(numFaces, vector<int>());
+
+				int polyconnectsCurrentIndex = 0;
+				for (int i = 0; i < numFaces; i++)
+				{
+					int num_faceVerts = _polyCounts[i];
+
+					for (int j = 0; j < num_faceVerts; j++)
+					{
+						polygons[i].push_back(_polyConnects[polyconnectsCurrentIndex + j]);
+					}
+
+					polyconnectsCurrentIndex += num_faceVerts;
+				}
+			}
+
+			bool exit = false;
+
+			// compute forces
+			for (int j = 0; j < numFaces; j++)
+			{
+				double uA, uB;
+				zPoint pA, pB;
+
+				bool check = core.line_lineClosestPoints(vertexPositions[polygons[j][0]], vertexPositions[polygons[j][2]], vertexPositions[polygons[j][1]], vertexPositions[polygons[j][3]], uA, uB, pA, pB);
+
+				deviations[j] = pA.distanceTo(pB);
+			}
+
+
+			// output
+			for (int i = 0; i < deviations.size(); i++)
+			{
+				outDeviations[i] = deviations[i];
+			}
+
+		}
+
+	}
+
 }
 
