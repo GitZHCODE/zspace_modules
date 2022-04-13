@@ -312,7 +312,7 @@ namespace  zSpace
 			{
 				exit = true;
 
-				// compute forces
+				// compute planarity forces
 				for (int j = 0; j < numFaces; j++)
 				{
 					
@@ -329,9 +329,11 @@ namespace  zSpace
 
 						}						
 					}
+								
 
 				}
 
+						
 				// update positions
 				for (int i = 0; i < fnParticles.size(); i++)
 				{

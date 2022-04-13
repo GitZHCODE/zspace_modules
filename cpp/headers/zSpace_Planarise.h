@@ -104,6 +104,7 @@ namespace  zSpace
 	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
 	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
 	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
+	*	\param	[in]	_fixedVertices			- input container of anchor point indicies.	
 	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
 	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
 	* 	\param	[in]	updatetopology			- input boolean to update topology.
