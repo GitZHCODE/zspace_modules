@@ -13,24 +13,78 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\1_data">
+      <UniqueIdentifier>{79117ece-50d0-439c-a2fd-4a3e555c0826}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\1_data">
+      <UniqueIdentifier>{3d4a8628-8278-44d7-8334-8623675cfede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\0_base">
+      <UniqueIdentifier>{1e4fe616-df3d-4f5f-9b8e-4865c7499b6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\0_base">
+      <UniqueIdentifier>{4c0f39ec-d27c-4a62-b5a5-4b2a589e71c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\2_projectionSolver">
+      <UniqueIdentifier>{13a6773e-4e84-437f-abcb-05caab899c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\2_projectionSolver">
+      <UniqueIdentifier>{5932612a-cfb1-45a0-8162-e2e98c8d655a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\3_geometryProcessing">
+      <UniqueIdentifier>{28137d32-0b54-419a-b196-2786997b61b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3_geometryProcessing">
+      <UniqueIdentifier>{b36f4be6-3cc3-4e70-b832-263ce5f42fdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\cpp\headers\zSpace_Planarise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\cpp\headers\zSpace_kMeans.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="..\..\..\cpp\source\zModules\base\zSpace_MeshUtilities.cpp">
+      <Filter>Source Files\0_base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\data\zSpace_kMeans.cpp">
+      <Filter>Source Files\1_data</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_CCFSolver.cpp">
+      <Filter>Source Files\2_projectionSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_PlanariseSolver.cpp">
+      <Filter>Source Files\2_projectionSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_ProjectionForces.cpp">
+      <Filter>Source Files\2_projectionSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_CurvatureDirections.cpp">
+      <Filter>Source Files\3_geometryProcessing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\cpp\source\zSpace_Planarise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\cpp\headers\zSpace_Modules.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\cpp\source\zSpace_kMeans.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ComputeMesh.h">
+      <Filter>Header Files\0_base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_MeshUtilities.h">
+      <Filter>Header Files\0_base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_Modules.h">
+      <Filter>Header Files\0_base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ModulesEnumerators.h">
+      <Filter>Header Files\0_base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\data\zSpace_kMeans.h">
+      <Filter>Header Files\1_data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_CCFSolver.h">
+      <Filter>Header Files\2_projectionSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_PlanariseSolver.h">
+      <Filter>Header Files\2_projectionSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_ProjectionForces.h">
+      <Filter>Header Files\2_projectionSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_CurvatureDirections.h">
+      <Filter>Header Files\3_geometryProcessing</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

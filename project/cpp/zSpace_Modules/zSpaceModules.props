@@ -4,9 +4,20 @@
   <PropertyGroup Label="UserMacros">
     <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core</zspacecoreDir>
     <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets</zspacetoolsetDir>
+    <zspaceDeployDir>C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\src\zspace</zspaceDeployDir>
+    <iglIncludeDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_modules\cpp\depends\igl\headers</iglIncludeDir>
+    <iglBuildDIr>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_modules\cpp\depends\igl\build</iglBuildDIr>
+    <aliceEXEDir>C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\EXE</aliceEXEDir>
   </PropertyGroup>
   <PropertyGroup />
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <PostBuildEvent>
+      <Command>CALL "$(SolutionDir)scripts\"zspace_libdeploy.bat "$(outDir)" "$(zspaceDeployDir)\lib"
+CALL "$(SolutionDir)scripts\"zspace_dlldeploy.bat "$(outDir)" "$(aliceEXEDir)"
+CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)\cpp\headers" "$(zspaceDeployDir)\headers"
+REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)\cpp\depends" "$(zspaceDeployDir)\depends"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="zspacecoreDir">
       <Value>$(zspacecoreDir)</Value>
@@ -14,6 +25,22 @@
     </BuildMacro>
     <BuildMacro Include="zspacetoolsetDir">
       <Value>$(zspacetoolsetDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="zspaceDeployDir">
+      <Value>$(zspaceDeployDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="iglIncludeDir">
+      <Value>$(iglIncludeDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="iglBuildDIr">
+      <Value>$(iglBuildDIr)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="aliceEXEDir">
+      <Value>$(aliceEXEDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

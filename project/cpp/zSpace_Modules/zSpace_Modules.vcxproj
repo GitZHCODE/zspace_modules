@@ -70,26 +70,38 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE; ZSPACE_UNREAL_INTEROP; ZSPACE_MODULES_DYNAMIC_LIBRARY; %(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE; ZSPACE_UNREAL_INTEROP; ZSPACE_MODULES_DYNAMIC_LIBRARY;IGL_STATIC_LIBRARY; %(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(zspacecoreDir)/cpp/Depends/Armadillo;$(zspacecoreDir)/cpp/Depends;$(zspacecoreDir); $(zspacecoreDir)/cpp;$(solutionDir)/cpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(zspacecoreDir)/cpp/Depends/Armadillo;$(zspacecoreDir)/cpp/Depends;$(zspacecoreDir);$(zspacecoreDir)/cpp;$(solutionDir)/cpp;$(iglIncludeDir);$(iglBuildDir)\_deps\eigen-src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild>true</MinimalRebuild>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\cpp\headers\zSpace_kMeans.h" />
-    <ClInclude Include="..\..\..\cpp\headers\zSpace_Planarise.h" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\base\zSpace_MeshUtilities.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\data\zSpace_kMeans.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_CurvatureDirections.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_CCFSolver.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_PlanariseSolver.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_ProjectionForces.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\cpp\headers\zSpace_Modules.h" />
-    <ClCompile Include="..\..\..\cpp\source\zSpace_kMeans.cpp" />
-    <ClCompile Include="..\..\..\cpp\source\zSpace_Planarise.cpp" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ComputeMesh.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_MeshUtilities.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_Modules.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ModulesEnumerators.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\data\zSpace_kMeans.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_CurvatureDirections.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_CCFSolver.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_PlanariseSolver.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_ProjectionForces.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
