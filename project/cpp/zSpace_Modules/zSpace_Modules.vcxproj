@@ -87,8 +87,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\cpp\source\zModules\base\zSpace_MeshUtilities.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zModules\data\zSpace_kMeans.cpp" />
-    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_CurvatureDirections.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_Curvatures.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_CCFSolver.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_PlanariseSolver.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_ProjectionForces.cpp" />
   </ItemGroup>
@@ -98,8 +99,9 @@
     <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_Modules.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ModulesEnumerators.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\data\zSpace_kMeans.h" />
-    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_CurvatureDirections.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_Curvatures.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_CCFSolver.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_PlanariseSolver.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_ProjectionForces.h" />
   </ItemGroup>

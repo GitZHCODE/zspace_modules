@@ -10,8 +10,8 @@
 // Author : Vishu Bhooshan <vishu.bhooshan@zaha-hadid.com>
 //
 
-#ifndef ZSPACE_MODULES_CCFSOLVER_H
-#define ZSPACE_MODULES_CCFSOLVER_H
+#ifndef ZSPACE_MODULES_MINIMALSURFACESOLVER_H
+#define ZSPACE_MODULES_MINIMALSURFACESOLVER_H
 
 #pragma once
 #include <vector>
@@ -31,11 +31,10 @@ namespace  zSpace
 	//--------------------------
 	//---- GLOBAL VARIABLES
 	//--------------------------
-	zComputeMesh ccfMesh;
-	zPlanarType ccf_planarisationType;
-
+	zComputeMesh msMesh;
+	
 	//--------------------------
-	//---- EXTERNAL METHOD FOR CCF
+	//---- EXTERNAL METHOD FOR Minimal Surface
 	//--------------------------
 
 	/*! \brief This method initialises the solver for planarisation.
@@ -47,12 +46,11 @@ namespace  zSpace
 	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
 	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
 	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
-	*  	\param	[out]	outPlanarityDeviations	- output container of planarity deviations per face/polygon.
-	*  	\param	[out]	outGaussianCurvatures	- output container of gaussian curvatures per vertex.
+	*  	\param	[out]	outMeanCurvature		- output container of mean curvature per vertex.
 	*	\return			bool					- output boolean - true if setup is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES bool ccfSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outPlanarityDeviations, double* outGaussianCurvatures);
+	extern "C" ZSPACE_MODULES bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outMeanCurvature);
 
 	/*! \brief This method planarises the input quad mesh using the closest distance between diagonals as the tolerance test.
 	*
@@ -68,7 +66,7 @@ namespace  zSpace
 	*  	\param	[out]	outDeviations			- output container of planarity deviations per face/polygon.
 	*	\since version 0.0.4
 	*/
-	//extern "C" ZSPACE_MODULES void ccfSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outPlanarityDeviations, double* outGaussianCurvatures);
+	//extern "C" ZSPACE_MODULES void msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outPlanarityDeviations, double* outGaussianCurvatures);
 
 	
 	//--------------------------
@@ -81,13 +79,13 @@ namespace  zSpace
 	*	\param	[in]	numFixed				- number of fixed vertices.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES void ccfSolver_setFixed(int* _fixedVertices, int numFixed);
+	extern "C" ZSPACE_MODULES void msSolver_setFixed(int* _fixedVertices, int numFixed);
 }
 
 #if defined(ZSPACE_MODULES_DYNAMIC_LIBRARY)
 // All defined OK so do nothing
 #else
-#include<source/zModules/projectionsolver/zSpace_CCFSolver.cpp>
+#include<source/zModules/projectionsolver/zSpace_MinimalSurfaceSolver.cpp>
 #endif
 
 #endif

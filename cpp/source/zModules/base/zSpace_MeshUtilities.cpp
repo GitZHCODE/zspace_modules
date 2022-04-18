@@ -17,7 +17,7 @@ namespace  zSpace
 {
 	//----  CREATE METHODS
 	
-	ZSPACE_INLINE void createMeshOBJ(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, zObjMesh& out_mesh)
+	ZSPACE_MODULES_INLINE void createMeshOBJ(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, zObjMesh& out_mesh)
 	{
 		if (!_vertexPositions || !_polyCounts || !_polyConnects) throw std::invalid_argument(" error: mesh container is empty.");
 
@@ -53,12 +53,14 @@ namespace  zSpace
 		
 	}
 
-	ZSPACE_INLINE void createComputeMesh(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, bool makeDynamic, zComputeMesh& outMesh)
+	ZSPACE_MODULES_INLINE void createComputeMesh(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, bool makeDynamic, zComputeMesh& outMesh)
 	{
 		if (!_vertexPositions || !_polyCounts || !_polyConnects) throw std::invalid_argument(" error: mesh container is empty.");
 
 		outMesh.vertexPositions.clear();
 		outMesh.vertexPositions.assign(numVerts, zPoint());
+
+		outMesh.nV = numVerts;
 
 		for (int i = 0; i < numVerts; i += 1)
 		{
@@ -70,6 +72,8 @@ namespace  zSpace
 
 		outMesh.polygons.clear();
 		outMesh.polygons.assign(numFaces, vector<int>());
+
+		outMesh.nF = numFaces;
 
 		int polyconnectsCurrentIndex = 0;
 		for (int i = 0; i < numFaces; i++)
@@ -108,11 +112,12 @@ namespace  zSpace
 		}
 		
 		outMesh.triangles.clear();		
+		outMesh.nT = 0;
 	}
 
 	//----  SET METHODS
 
-	ZSPACE_INLINE void setTriangles(zComputeMesh& inMesh, int numFaces, int* _triCounts, int* _triConnects)
+	ZSPACE_MODULES_INLINE void setTriangles(zComputeMesh& inMesh, int numFaces, int* _triCounts, int* _triConnects)
 	{
 		if (numFaces != inMesh.polygons.size()) throw std::invalid_argument(" error: triangles container is empty.");
 		if(!_triCounts || !_triConnects) throw std::invalid_argument(" error: triangles container is empty.");
@@ -120,9 +125,12 @@ namespace  zSpace
 		inMesh.triangles.clear();
 		inMesh.triangles.assign(numFaces, vector<int>());
 
+		inMesh.nT = 0;
+
 		int triconnectsCurrentIndex = 0;
 		for (int i = 0; i < numFaces; i++)
 		{
+			inMesh.nT += _triCounts[i];
 			int num_triVerts = _triCounts[i];
 
 			for (int j = 0; j < num_triVerts * 3; j++)
@@ -134,9 +142,46 @@ namespace  zSpace
 		}
 	}
 
+	//----  UPDATE METHODS
+
+	ZSPACE_MODULES_INLINE void updateMatrixV(zComputeMesh& inMesh)
+	{
+		MatrixXd V(inMesh.nV, 3);
+		
+		// fill vertex matrix
+		for (int i = 0; i < inMesh.nV; i++)
+		{
+			V(i, 0) = inMesh.vertexPositions[i].x;
+			V(i, 1) = inMesh.vertexPositions[i].y;
+			V(i, 2) = inMesh.vertexPositions[i].z;
+		}
+
+		inMesh.V = V;
+	}
+
+	ZSPACE_MODULES_INLINE void updateMatrixFTris(zComputeMesh& inMesh)
+	{
+		MatrixXi FTris(inMesh.nT, 3);
+
+		int nTris = 0;
+		for (int i = 0; i < inMesh.triangles.size(); i++)
+		{
+			for (int j = 0; j < inMesh.triangles[i].size(); j += 3)
+			{
+				FTris(nTris, 0) = inMesh.triangles[i][j + 0];
+				FTris(nTris, 1) = inMesh.triangles[i][j + 1];
+				FTris(nTris, 2) = inMesh.triangles[i][j + 2];
+
+				nTris++;
+			}
+		}
+
+		inMesh.FTris = FTris;
+	}
+
 	//----  COMPUTE METHODS
 
-	ZSPACE_INLINE void computeFaceVolumes(zComputeMesh& inMesh, zPointArray& fCenters, zDoubleArray& fVolumes)
+	ZSPACE_MODULES_INLINE void computeFaceVolumes(zComputeMesh& inMesh, zPointArray& fCenters, zDoubleArray& fVolumes)
 	{
 		zUtilsCore core;
 
@@ -175,7 +220,7 @@ namespace  zSpace
 		}
 	}
 
-	ZSPACE_INLINE void computeFaceNormals(zComputeMesh& inMesh, zVectorArray& fNormals)
+	ZSPACE_MODULES_INLINE void computeFaceNormals(zComputeMesh& inMesh, zVectorArray& fNormals)
 	{
 		if (inMesh.triangles.size() == 0) throw std::invalid_argument(" error: triangles container is empty.");
 
@@ -199,7 +244,7 @@ namespace  zSpace
 		}
 	}
 
-	ZSPACE_INLINE void computeQuadPlanarityDeviation(zComputeMesh& inMesh, zDoubleArray& fDeviations)
+	ZSPACE_MODULES_INLINE void computeQuadPlanarityDeviation(zComputeMesh& inMesh, zDoubleArray& fDeviations)
 	{
 		if (inMesh.vertexPositions.size() == 0) throw std::invalid_argument(" error: compute mesh containers are empty.");
 
@@ -219,92 +264,5 @@ namespace  zSpace
 		}
 		
 	}
-
-	ZSPACE_INLINE void computeGaussianCurvatures(zComputeMesh& inMesh, zInt2DArray& cVertices, zBoolArray& vBoundary, zDoubleArray& vGaussianCurvatures)
-	{
-		if (inMesh.vertexPositions.size() == 0) throw std::invalid_argument(" error: compute mesh containers are empty.");
-		if (inMesh.vertexPositions.size() != vBoundary.size()) throw std::invalid_argument(" error: input containers are not the same size.");
-		if (inMesh.vertexPositions.size() != cVertices.size()) throw std::invalid_argument(" error: input containers are not the same size.");
-
-		vGaussianCurvatures.clear();
-		vGaussianCurvatures.assign(inMesh.vertexPositions.size(), double());
-
-		for (int i = 0; i < inMesh.vertexPositions.size(); i++)
-		{
-			double angleSum = 0;
-			double cotangentSum = 0;
-			double areaSum = 0;
-			double areaSumMixed = 0;
-			double edgeLengthSquare = 0;
-			float gaussianCurv = 0;
-			float gaussianAngle = 0;
-
-			if (!vBoundary[i])
-			{
-				zPoint pt = inMesh.vertexPositions[i];
-				float multFactor = 0.125;
-
-				int i = 0;
-				for (auto v : cVertices[i])
-				{
-					int next = (i + 1) % cVertices[i].size();
-					int prev = (i + cVertices[i].size() - 1) % cVertices[i].size();
-
-					zVector pt1 = inMesh.vertexPositions[v];
-					zVector pt2 = inMesh.vertexPositions[cVertices[i][next]];
-					zVector pt3 = inMesh.vertexPositions[cVertices[i][prev]];
-
-					zVector p01 = pt - pt1;
-					zVector p02 = pt - pt2;
-					zVector p10 = pt1 - pt;
-					zVector p20 = pt2 - pt;
-					zVector p12 = pt1 - pt2;
-					zVector p21 = pt2 - pt1;
-					zVector p31 = pt3 - pt1;
-
-					zVector cr = (p10) ^ (p20);
-
-					float ang = (p10).angle(p20);
-					angleSum += ang;
-					cotangentSum += (((p20) * (p10)) / cr.length());
-
-
-					float e_Length = (pt1 - pt2).length();
-
-					edgeLengthSquare += (e_Length * e_Length);
-
-					zVector cr_alpha = (p01) ^ (p21);
-					zVector cr_beta = (p01) ^ (p31);
-
-					float coTan_alpha = (((p01) * (p21)) / cr_alpha.length());
-					float coTan_beta = (((p01) * (p31)) / cr_beta.length());
-
-					// check if triangle is obtuse
-					if ((p10).angle(p20) <= 90 && (p01).angle(p21) <= 90 && (p12).angle(p02) <= 90)
-					{
-						areaSumMixed += (coTan_alpha + coTan_beta) * edgeLengthSquare * 0.125;
-					}
-					else
-					{
-						double triArea = (((p10) ^ (p20)).length()) / 2;
-
-						if ((ang) <= 90) areaSumMixed += triArea * 0.25;
-						else areaSumMixed += triArea * 0.5;
-
-					}
-
-					i++;
-				}
-
-				gaussianCurv = (360 - angleSum) / ((0.5 * areaSum) - (multFactor * cotangentSum * edgeLengthSquare));
-
-			}
-
-			vGaussianCurvatures[i] = gaussianCurv;
-			
-		}
-
-	}
-
 
 }

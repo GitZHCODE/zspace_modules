@@ -14,7 +14,7 @@
 
 namespace  zSpace
 {
-	ZSPACE_INLINE void kMeansClustering(double* _data, int numDataPoints, int datastride, int numClusters, int numIterations, int* outClusters, double* outClusterCentroids)
+	ZSPACE_MODULES_INLINE void kMeansClustering(double* _data, int numDataPoints, int datastride, int numClusters, int numIterations, int* outClusters, double* outClusterCentroids)
 	{
 		zUtilsCore core;
 

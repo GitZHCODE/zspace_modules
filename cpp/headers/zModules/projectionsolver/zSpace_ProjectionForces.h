@@ -16,6 +16,7 @@
 #pragma once
 
 #include <headers/zModules/base/zSpace_MeshUtilities.h>
+#include <headers/zModules/geometryprocessing/zSpace_Curvatures.h>
 
 namespace  zSpace
 {
@@ -24,10 +25,62 @@ namespace  zSpace
 	//---- PROJECTION FORCE METHODS
 	//--------------------------
 
-	ZSPACE_MODULES void addPlanarityForces(zComputeMesh &inMesh, zPlanarType type, double &tolerance, bool &exit , zDoubleArray &planarityDeviations, zPointArray &targetCenters, zVectorArray &targetNormals);
-	
-	//ZSPACE_MODULES void addGaussianForces();
+	/*! \brief This method adds the gravitational force to the input mesh.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*	\param	[in]	gForce					- gravitational force vector.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void addGravityForce(zComputeMesh& inMesh, zVector &gForce);
 
+
+	/*! \brief This method adds the planarisation forces to the input mesh.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.		
+	*	\param	[in]	type					- input planarisation type - zQuadPlanar or zVolumePlanar.
+	* 	\param	[in]	tolerance				- input tolerance value belwo which the force isnt applied.
+	*  	\param	[out]	exit					- output boolean true if all the planarity deviations are below tolerance.
+	*  	\param	[out]	planarityDeviations		- output container of planarity deviations per face.
+	*  	\param	[in]	targetCenters			- container of target origin per face. Used only for zVolumePlanar planarisation type.
+	*  	\param	[in]	targetNormals			- container of target normals per face. Used only for zVolumePlanar planarisation type.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void addPlanarityForces(zComputeMesh &inMesh, zPlanarType type, zPointArray& targetCenters, zVectorArray& targetNormals, double &tolerance, zDoubleArray &planarityDeviations, bool& exit);
+	
+	/*! \brief This method adds the planarisation forces to the input mesh.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*	\param	[in]	type					- input planarisation type - zQuadPlanar or zVolumePlanar.
+	* 	\param	[in]	tolerance				- input tolerance value belwo which the force isnt applied.
+	*  	\param	[out]	exit					- output boolean true if all the planarity deviations are below tolerance.
+	*  	\param	[out]	planarityDeviations		- output container of planarity deviations per face.
+	*  	\param	[in]	targetCenters			- container of target origin per face. Used only for zVolumePlanar planarisation type.
+	*  	\param	[in]	targetNormals			- container of target normals per face. Used only for zVolumePlanar planarisation type.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void addGaussianForces(zComputeMesh& inMesh, zInt2DArray& cVertices, zBoolArray& vBoundary, double& tolerance,  zDoubleArray& vGaussianCurvatures, bool& exit);
+
+	//--------------------------
+	//---- SET METHODS 
+	//--------------------------
+
+	/*! \brief This method makes the vertices specified by the input contatiner fixed.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.		
+	*	\param	[in]	_fixedVertices			- input container of anchor point indicies.
+	*	\param	[in]	numFixed				- number of fixed vertices.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void setFixed(zComputeMesh& inMesh, int* _fixedVertices, int numFixed);
+
+	/*! \brief This method set the mass of the vertices specified by the input contatiner.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*	\param	[in]	_vMass					- input container of vertex mass.
+	*	\param	[in]	numVerts				- number of vertices. Should match the number of vertices of the mesh.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void setMass(zComputeMesh& inMesh, int* _vMass, int numVerts);
 }
 
 #if defined(ZSPACE_MODULES_DYNAMIC_LIBRARY)

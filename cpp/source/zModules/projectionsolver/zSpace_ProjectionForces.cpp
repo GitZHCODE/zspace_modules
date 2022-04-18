@@ -17,7 +17,17 @@ namespace  zSpace
 
 	//---- PROJECTION FORCE METHODS
 	
-	ZSPACE_INLINE void addPlanarityForces(zComputeMesh& inMesh, zPlanarType type, double &tolerance, bool &exit, zDoubleArray& planarityDeviations, zPointArray& targetCenters, zVectorArray& targetNormals)
+	ZSPACE_MODULES_INLINE void addGravityForce(zComputeMesh& inMesh, zVector& gForce)
+	{
+		int numVerts = inMesh.vertexPositions.size();
+
+		for (int j = 0; j < numVerts; j++)
+		{
+			inMesh.fnParticles[j].addForce(gForce);
+		}
+	}
+
+	ZSPACE_MODULES_INLINE void addPlanarityForces(zComputeMesh& inMesh, zPlanarType type, zPointArray& targetCenters, zVectorArray& targetNormals, double& tolerance, zDoubleArray& planarityDeviations, bool& exit)
 	{
 		zUtilsCore core;
 		int numFaces = inMesh.polygons.size();
@@ -69,6 +79,52 @@ namespace  zSpace
 
 					}
 				}
+			}
+		}
+	}
+
+	ZSPACE_MODULES_INLINE void addGaussianForces(zComputeMesh& inMesh, zInt2DArray& cVertices, zBoolArray& vBoundary, double& tolerance, zDoubleArray& vGaussianCurvatures, bool& exit)
+	{
+		int numVerts = inMesh.vertexPositions.size();
+
+		//compute gaussian curvature
+		VectorXd vGauss;
+		computeGaussianCurvature(inMesh, vGauss);
+
+		// compute gradient and force
+		for (int i = 0; i < inMesh.nV; i++)
+		{
+
+		}
+		
+	}
+
+	//---- EXTERNAL METHODS FOR CONSTRAINTS
+
+	ZSPACE_MODULES_INLINE void setFixed(zComputeMesh& inMesh, int* _fixedVertices, int numFixed)
+	{
+		if (numFixed >= inMesh.vertexPositions.size()) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
+
+		// set fixed
+		if (_fixedVertices)
+		{
+			for (int i = 0; i < numFixed; i++)
+			{
+				inMesh.fnParticles[_fixedVertices[i]].setFixed(true);
+			}
+		}
+	}
+
+	ZSPACE_MODULES_INLINE void setMass(zComputeMesh& inMesh, int* _vMass, int numVerts)
+	{
+		if (numVerts != inMesh.vertexPositions.size()) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
+
+		// set mass
+		if (_vMass)
+		{
+			for (int i = 0; i < numVerts; i++)
+			{
+				inMesh.fnParticles[i].setMass(_vMass[i]);
 			}
 		}
 	}

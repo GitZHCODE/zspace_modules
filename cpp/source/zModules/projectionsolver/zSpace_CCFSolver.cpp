@@ -17,14 +17,19 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR CCF
 
-	ZSPACE_INLINE bool ccfSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, double* outPlanarityDeviations, double* outGaussianCurvatures)
+	ZSPACE_MODULES_INLINE bool ccfSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outPlanarityDeviations, double* outGaussianCurvatures)
 	{
 		bool out = false;
 
-		if (_vertexPositions && _polyCounts && _polyConnects && outPlanarityDeviations && outGaussianCurvatures)
+		if (_vertexPositions && _polyCounts && _polyConnects && _triCounts && _triConnects && outPlanarityDeviations && outGaussianCurvatures)
 		{
 			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, true, ccfMesh);
-		
+			
+			// set triangles and matrices for igl method call
+			setTriangles(ccfMesh, numFaces, _triCounts, _triConnects);
+			updateMatrixV(ccfMesh);
+			updateMatrixFTris(ccfMesh);
+
 			// set planarity type
 			ccf_planarisationType = zQuadPlanar;
 
@@ -33,19 +38,18 @@ namespace  zSpace
 			computeQuadPlanarityDeviation(ccfMesh, fDeviations);
 
 			//compute gaussian curvature
-			zDoubleArray vGauss;
-
-			zObjMesh oMesh;
-			zFnMesh fnMesh(oMesh);
-			
-			
-
-			//computeGaussianCurvatures(compMesh,)
+			VectorXd vGauss;
+			computeGaussianCurvature(ccfMesh, vGauss);
 
 			// update deviations
-			for (int i = 0; i < fDeviations.size(); i++)
+			for (int i = 0; i < ccfMesh.nF; i++)
 			{
 				outPlanarityDeviations[i] = fDeviations[i];
+			}
+
+			for (int i = 0; i < ccfMesh.nV; i++)
+			{
+				outGaussianCurvatures[i] = vGauss[i];
 			}
 			
 
@@ -57,18 +61,9 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR CONSTRAINTS
 
-	ZSPACE_INLINE void ccfSolver_setFixed(int* _fixedVertices, int numFixed)
+	ZSPACE_MODULES_INLINE void ccfSolver_setFixed(int* _fixedVertices, int numFixed)
 	{
-		if (numFixed >= ccfMesh.vertexPositions.size()) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
-
-		// set fixed
-		if (_fixedVertices)
-		{			
-			for (int i = 0; i < numFixed; i++)
-			{
-				ccfMesh.fnParticles[_fixedVertices[i]].setFixed(true);
-			}
-		}
+		setFixed(ccfMesh, _fixedVertices, numFixed);
 	}
 
 

@@ -79,6 +79,23 @@ namespace  zSpace
 	*/
 	ZSPACE_MODULES void setTriangles(zComputeMesh& inMesh, int numFaces, int* _triCounts, int* _triConnects);
 
+	//--------------------------
+	//----  UPDATE METHODS
+	//--------------------------
+
+	/*! \brief This method updates the V matrix of input zComputeMesh from the current vertex positions.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void updateMatrixV(zComputeMesh& inMesh);
+
+	/*! \brief This method updates the FTris matrix of input zComputeMesh from the current triangle connectivity.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void updateMatrixFTris(zComputeMesh& inMesh);
 
 	//--------------------------
 	//----  COMPUTE METHODS
@@ -109,16 +126,6 @@ namespace  zSpace
 	*	\since version 0.0.4
 	*/
 	ZSPACE_MODULES void computeQuadPlanarityDeviation(zComputeMesh& inMesh, zDoubleArray& fDeviations);
-
-	/*! \brief This utility method computes the principal curvature of the mesh per vertex.
-	*
-	*	\param	[in]	inMesh					- input compute mesh object.
-	*	\param	[in]	cVertices				- input container of connected vertices per vertexnot.
-	*	\param	[in]	vBoundary				- input container of booleans per vertex indicating if its on boundary or not.
-	*  	\param	[out]	vGaussianCurvatures		- output container of vertex gaussian curvatures.
-	*	\since version 0.0.4
-	*/
-	ZSPACE_MODULES void computeGaussianCurvatures(zComputeMesh& inMesh, zInt2DArray &cVertices, zBoolArray &vBoundary, zDoubleArray& vGaussianCurvatures);
 
 }
 

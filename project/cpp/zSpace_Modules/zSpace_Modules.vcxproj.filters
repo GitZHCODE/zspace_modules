@@ -54,8 +54,11 @@
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_ProjectionForces.cpp">
       <Filter>Source Files\2_projectionSolver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_CurvatureDirections.cpp">
+    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_Curvatures.cpp">
       <Filter>Source Files\3_geometryProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.cpp">
+      <Filter>Source Files\2_projectionSolver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,8 +86,11 @@
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_ProjectionForces.h">
       <Filter>Header Files\2_projectionSolver</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_CurvatureDirections.h">
+    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_Curvatures.h">
       <Filter>Header Files\3_geometryProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.h">
+      <Filter>Header Files\2_projectionSolver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,4 +15,10 @@
 #undef ZSPACE_MODULES
 #endif
 
+#if defined (ZSPACE_MODULES_DYNAMIC_LIBRARY)
+#  define ZSPACE_MODULES_INLINE 
+#else
+#  define ZSPACE_MODULES_INLINE inline
+#endif
+
 #define ZSPACE_MODULES __declspec(dllexport)

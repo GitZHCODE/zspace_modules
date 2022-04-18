@@ -42,7 +42,22 @@ namespace  zSpace
 		zInt2DArray polygons;
 
 		/*!	\brief 2D container of triangle vertex connectivity */
-		zInt2DArray triangles;		
+		zInt2DArray triangles;	
+
+		/*!	\brief matrix of vertex positions. This is to be set to call IGL methods */
+		MatrixXd V;
+
+		/*!	\brief matrix of Tri-Face connectivity. This is to be set to call IGL methods */
+		MatrixXi FTris;
+
+		/*!	\brief number of vertices */
+		int nV;
+
+		/*!	\brief number of polygons */
+		int nF;
+
+		/*!	\brief number of triangles */
+		int nT;
 
 	};
 

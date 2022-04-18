@@ -17,7 +17,7 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR PLANARISATION
 
-	ZSPACE_INLINE int planariseSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool volPlanarise, double* outDeviations)
+	ZSPACE_MODULES_INLINE int planariseSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool volPlanarise, double* outDeviations)
 	{
 		bool out = false;
 
@@ -34,11 +34,12 @@ namespace  zSpace
 				// set planarity type
 				planarisationType = zVolumePlanar;
 
-				zObjMesh oMesh;
-				createMeshOBJ(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, oMesh);
-
+				
 				if (!_triCounts || !_triConnects)
 				{
+					zObjMesh oMesh;
+					createMeshOBJ(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, oMesh);
+
 					zFnMesh fnMesh(oMesh);
 					fnMesh.getMeshTriangles(planariseMesh.triangles);
 				}										
@@ -83,7 +84,7 @@ namespace  zSpace
 		return out;
 	}
 
-	ZSPACE_INLINE void planariseSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outDeviations)
+	ZSPACE_MODULES_INLINE void planariseSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outDeviations)
 	{
 		zDoubleArray fDeviations;
 
@@ -107,7 +108,7 @@ namespace  zSpace
 					exit = true;
 
 					// add planarity forces
-					addPlanarityForces(planariseMesh, planarisationType, tolerance, exit, fDeviations, fCenters, fNormals);
+					addPlanarityForces(planariseMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
 
 					// update positions
 					for (int i = 0; i < planariseMesh.fnParticles.size(); i++)
@@ -136,7 +137,7 @@ namespace  zSpace
 					exit = true;
 
 					// compute forces
-					addPlanarityForces(planariseMesh, planarisationType, tolerance, exit, fDeviations, fCenters, fNormals);
+					addPlanarityForces(planariseMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
 
 					// update positions
 					for (int i = 0; i < planariseMesh.fnParticles.size(); i++)
@@ -168,18 +169,9 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR CONSTRAINTS
 
-	ZSPACE_INLINE void planariseSolver_setFixed(int* _fixedVertices, int numFixed)
+	ZSPACE_MODULES_INLINE void planariseSolver_setFixed(int* _fixedVertices, int numFixed)
 	{
-		if (numFixed >= planariseMesh.vertexPositions.size()) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
-
-		// set fixed
-		if (_fixedVertices)
-		{
-			for (int i = 0; i < numFixed; i++)
-			{
-				planariseMesh.fnParticles[_fixedVertices[i]].setFixed(true);
-			}
-		}
+		setFixed(planariseMesh, _fixedVertices, numFixed);		
 	}
 
 }
