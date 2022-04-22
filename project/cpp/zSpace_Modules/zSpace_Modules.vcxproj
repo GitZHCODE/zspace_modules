@@ -92,6 +92,7 @@
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_PlanariseSolver.cpp" />
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_ProjectionForces.cpp" />
+    <ClCompile Include="..\..\..\cpp\source\zModules\statics\zSpace_FDM.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ComputeMesh.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_PlanariseSolver.h" />
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_ProjectionForces.h" />
+    <ClInclude Include="..\..\..\cpp\headers\zModules\statics\zSpace_FDM.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

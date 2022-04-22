@@ -64,12 +64,11 @@ namespace  zSpace
 		{
 			if (!exit)
 			{
+				//// Minimize Area Method
 				//exit = true;
-
-				// Minimize Area Method
 				//addMinimizeAreaForces(msMesh, tolerance, meanCurvatures, exit);
 				
-				//Relaxation Method			
+				//Spring Relaxation Method			
 				addSpringForce(msMesh, restLengths, springconstant);
 
 				// update positions
@@ -103,7 +102,8 @@ namespace  zSpace
 	//---- EXTERNAL METHODS FOR CONSTRAINTS
 
 	ZSPACE_MODULES_INLINE void msSolver_setFixed(int* _fixedVertices, int numFixed)
-	{
+	{	
+
 		setFixed(msMesh, _fixedVertices, numFixed);
 	}
 

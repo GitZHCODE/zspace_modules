@@ -37,6 +37,12 @@
     <Filter Include="Source Files\3_geometryProcessing">
       <UniqueIdentifier>{b36f4be6-3cc3-4e70-b832-263ce5f42fdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\4_statics">
+      <UniqueIdentifier>{a1ba2d5d-d402-4072-89b5-6645dd8b00fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\4_statics">
+      <UniqueIdentifier>{1b95140c-914c-4091-a37b-53983a22c8cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\cpp\source\zModules\base\zSpace_MeshUtilities.cpp">
@@ -59,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\cpp\source\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.cpp">
       <Filter>Source Files\2_projectionSolver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\statics\zSpace_FDM.cpp">
+      <Filter>Source Files\4_statics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +100,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cpp\headers\zModules\projectionsolver\zSpace_MinimalSurfaceSolver.h">
       <Filter>Header Files\2_projectionSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\statics\zSpace_FDM.h">
+      <Filter>Header Files\4_statics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
