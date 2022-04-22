@@ -46,11 +46,13 @@ namespace  zSpace
 	*	\param	[in]	datastride				- input stride of data ie number of features in a datapoint.
 	* 	\param	[in]	numClusters				- input number of clusters.
 	*  	\param	[in]	numIterations			- input number of iterations.
+	*  	\param	[in]	seed					- input seed value to generate the  random values for centroids.
 	*  	\param	[out]	outClusters				- output cluster index per data point.
 	*  	\param	[out]	outClusterCentroids		- output cluster centroids/means.
+	*	\return			int						- output boolean - true if setup is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES void kMeansClustering(double* _data, int numDataPoints, int datastride, int numClusters, int numIterations, int* outClusters, double* outClusterCentroids);
+	extern "C" ZSPACE_MODULES int kMeansClustering(double* _data, int numDataPoints, int datastride, int numClusters, int numIterations, int seed, bool datapointAsMean, int* outClusters, double* outClusterCentroids);
 
 }
 

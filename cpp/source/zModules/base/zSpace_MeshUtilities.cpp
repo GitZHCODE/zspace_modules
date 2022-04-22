@@ -73,7 +73,7 @@ namespace  zSpace
 		outMesh.polygons.clear();
 		outMesh.polygons.assign(numFaces, vector<int>());
 
-		outMesh.nF = numFaces;
+		outMesh.nF = numFaces;		
 
 		int polyconnectsCurrentIndex = 0;
 		for (int i = 0; i < numFaces; i++)
@@ -86,6 +86,49 @@ namespace  zSpace
 			}
 
 			polyconnectsCurrentIndex += num_faceVerts;
+		}
+
+		//edges
+
+		outMesh.edges.clear();
+		outMesh.nE = 0;
+
+		//	halfedge connectivity map
+		unordered_map <string, int> existingHalfEdges;
+
+		for (int i = 0; i < outMesh.polygons.size(); i++)
+		{
+			for (int j = 0; j < outMesh.polygons[i].size(); j++)
+			{
+				int v1 = outMesh.polygons[i][j];
+				
+				int next = (j + 1) % outMesh.polygons[i].size();
+				int v2 = outMesh.polygons[i][next];
+
+				string e1 = (to_string(v1) + "," + to_string(v2));
+				std::unordered_map<std::string, int>::const_iterator got = existingHalfEdges.find(e1);
+
+				if (got != existingHalfEdges.end())
+				{
+					// edge exists continue
+				}
+				else
+				{
+					// add edge
+					outMesh.edges.push_back(zIntArray());
+					outMesh.edges[outMesh.nE].push_back(v1);
+					outMesh.edges[outMesh.nE].push_back(v2);
+					
+					// add halfedges to map
+					existingHalfEdges[e1] = outMesh.nE * 2  + 0;
+
+					string e2 = (to_string(v2) + "," + to_string(v1));
+					existingHalfEdges[e2] = outMesh.nE * 2 + 1;
+
+					outMesh.nE++;
+
+				}
+			}
 		}
 
 		// particles
@@ -113,6 +156,8 @@ namespace  zSpace
 		
 		outMesh.triangles.clear();		
 		outMesh.nT = 0;
+
+		//printf("\n compute Mesh : %i %i %i", outMesh.nV, outMesh.nE, outMesh.nF);
 	}
 
 	//----  SET METHODS

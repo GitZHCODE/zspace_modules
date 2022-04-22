@@ -41,6 +41,9 @@ namespace  zSpace
 		/*!	\brief 2D container of polygon vertex connectivity  */
 		zInt2DArray polygons;
 
+		/*!	\brief 2D container of edge vertex connectivity  */
+		zInt2DArray edges;			
+
 		/*!	\brief 2D container of triangle vertex connectivity */
 		zInt2DArray triangles;	
 
@@ -52,6 +55,9 @@ namespace  zSpace
 
 		/*!	\brief number of vertices */
 		int nV;
+
+		/*!	\brief number of edges */
+		int nE;
 
 		/*!	\brief number of polygons */
 		int nF;

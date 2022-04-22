@@ -49,7 +49,7 @@ namespace  zSpace
 	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
 	*  	\param	[in]	volPlanarise			- input boolean to set planarity solver type - quad diagonal distance or volume.
 	*  	\param	[out]	outDeviations			- output container of planarity deviations per face/polygon.
-	*	\return			bool					- output boolean - true if setup is successful.
+	*	\return			int					- output boolean - true if setup is successful.
 	*	\since version 0.0.4
 	*/
 	extern "C" ZSPACE_MODULES int planariseSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool volPlanarise, double* outDeviations);

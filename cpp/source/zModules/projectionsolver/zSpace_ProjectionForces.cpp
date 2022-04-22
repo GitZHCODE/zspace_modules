@@ -19,22 +19,49 @@ namespace  zSpace
 	
 	ZSPACE_MODULES_INLINE void addGravityForce(zComputeMesh& inMesh, zVector& gForce)
 	{
-		int numVerts = inMesh.vertexPositions.size();
-
-		for (int j = 0; j < numVerts; j++)
+		for (int j = 0; j < inMesh.nV; j++)
 		{
 			inMesh.fnParticles[j].addForce(gForce);
+		}
+	}
+
+	ZSPACE_MODULES_INLINE void addDragForce(zComputeMesh& inMesh, float drag)
+	{
+		for (int j = 0; j < inMesh.nV; j++)
+		{
+			zVector v = inMesh.fnParticles[j].getVelocity();
+			zVector pForce =  v * drag * -1;
+			inMesh.fnParticles[j].addForce(pForce);
+		}
+	}
+
+	ZSPACE_MODULES_INLINE void addSpringForce(zComputeMesh& inMesh, zFloatArray& restLength, float springConstant)
+	{
+		for (int j = 0; j < inMesh.nE; j++)
+		{
+			int v1 = inMesh.edges[j][0];
+			int v2 = inMesh.edges[j][1];
+
+			zVector e = inMesh.vertexPositions[v2] - inMesh.vertexPositions[v1];
+			float eLen = e.length();
+			e.normalize();
+						
+			float val = springConstant * (eLen - restLength[j]);
+			zVector pForce_v1 = e * val;				
+
+			zVector pForce_v2 = pForce_v1 * -1;			
+
+			inMesh.fnParticles[v1].addForce(pForce_v1);
+			inMesh.fnParticles[v2].addForce(pForce_v2);
 		}
 	}
 
 	ZSPACE_MODULES_INLINE void addPlanarityForces(zComputeMesh& inMesh, zPlanarType type, zPointArray& targetCenters, zVectorArray& targetNormals, double& tolerance, zDoubleArray& planarityDeviations, bool& exit)
 	{
 		zUtilsCore core;
-		int numFaces = inMesh.polygons.size();
-
 		if (type == zQuadPlanar)
 		{
-			for (int j = 0; j < numFaces; j++)
+			for (int j = 0; j < inMesh.nF; j++)
 			{
 				double uA, uB;
 				zPoint pA, pB;
@@ -65,7 +92,7 @@ namespace  zSpace
 		
 		else if (type == zVolumePlanar)
 		{
-			for (int j = 0; j < numFaces; j++)
+			for (int j = 0; j < inMesh.nF; j++)
 			{
 				if (planarityDeviations[j] > tolerance)
 				{
@@ -94,7 +121,35 @@ namespace  zSpace
 		// compute gradient and force
 		for (int i = 0; i < inMesh.nV; i++)
 		{
+			// boundary vertices
 
+			// interval vertices
+		}
+		
+	}
+
+	ZSPACE_MODULES_INLINE void addMinimizeAreaForces(zComputeMesh& inMesh, double& tolerance, VectorXd& meanCurvatures, bool& exit)
+	{
+		//compute mean curvature
+		MatrixXd HN;	 
+
+		computeMeanCurvature(inMesh, meanCurvatures, HN);
+
+		exit = false;
+
+		for (int i = 0; i < inMesh.nV; i++)
+		{
+			if (meanCurvatures[i] > tolerance)
+			{
+				exit = false;
+
+				zVector pForce(HN(i, 0), HN(i, 1), HN(i, 2));
+				pForce.normalize();
+				pForce *= (meanCurvatures(i) * -1);
+				inMesh.fnParticles[i].addForce(pForce);
+			}
+		
+			meanCurvatures[i] = meanCurvatures(i);
 		}
 		
 	}
@@ -103,7 +158,7 @@ namespace  zSpace
 
 	ZSPACE_MODULES_INLINE void setFixed(zComputeMesh& inMesh, int* _fixedVertices, int numFixed)
 	{
-		if (numFixed >= inMesh.vertexPositions.size()) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
+		if (numFixed >= inMesh.nV) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
 
 		// set fixed
 		if (_fixedVertices)
