@@ -47,7 +47,7 @@ namespace  zSpace
 			e.normalize();
 						
 			float val = springConstant * (eLen - restLength[j]);
-			zVector pForce_v1 = e * val;				
+			zVector pForce_v1 = e * (val * 0.5);				
 
 			zVector pForce_v2 = pForce_v1 * -1;			
 
