@@ -17,7 +17,7 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR Minimal Surface
 
-	ZSPACE_MODULES_INLINE bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outMeanCurvature)
+	ZSPACE_MODULES_INLINE bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool minAreaSolver, double* outMeanCurvature)
 	{
 		bool out = false;
 
@@ -29,6 +29,10 @@ namespace  zSpace
 			setTriangles(msMesh, numFaces, _triCounts, _triConnects);
 			updateMatrixV(msMesh);
 			updateMatrixFTris(msMesh);
+			
+			// set ms solver type
+			if (minAreaSolver) 	minimiseType = zMinimiseArea;
+			else minimiseType = zRestlength;
 			
 			//compute mean curvature
 			VectorXd vMeanCurvature;
@@ -48,7 +52,7 @@ namespace  zSpace
 		return out;
 	}
 
-	ZSPACE_MODULES_INLINE void msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outMeanCurvatures)
+	ZSPACE_MODULES_INLINE int msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outMeanCurvatures)
 	{
 		bool exit = false;
 
@@ -59,23 +63,34 @@ namespace  zSpace
 
 		zFloatArray restLengths;
 		restLengths.assign(msMesh.nE, 0.001);
+
+		for (int i = 0; i < msMesh.nV; i++)
+		{
+			msMesh.fnParticles[i].setMass(1);
+		}
 		
 		for (int i = 0; i < numIterations; i++)
 		{
 			if (!exit)
 			{
 				//// Minimize Area Method
-				//exit = true;
-				//addMinimizeAreaForces(msMesh, tolerance, meanCurvatures, exit);
-				
-				//Spring Relaxation Method			
-				addSpringForce(msMesh, restLengths, springconstant);
+				if (minimiseType == zMinimiseArea)
+				{
+					exit = true;
+					addMinimizeAreaForces(msMesh, tolerance, vMeanCurvature, exit);
+				}
+								
+				//Restlength Relaxation Method			
+				if (minimiseType == zRestlength)
+				{
+					addSpringForce(msMesh, restLengths, springconstant);
+				}
 
 				// update positions
 				for (int i = 0; i < msMesh.fnParticles.size(); i++)
 				{					
-					msMesh.fnParticles[i].integrateForces(0.5, zIntergrationType::zRK4);
-					msMesh.fnParticles[i].updateParticle(true);
+					msMesh.fnParticles[i].integrateForces(0.1, zIntergrationType::zRK4);
+					msMesh.fnParticles[i].updateParticle(true,true,true);
 				}
 
 				// update matrix positions
@@ -96,7 +111,13 @@ namespace  zSpace
 		for (int i = 0; i < msMesh.nV; i++)
 		{
 			outMeanCurvatures[i] = vMeanCurvature(i);
+
+			if (vMeanCurvature(i) < tolerance) exit = false;
 		}
+
+
+
+		return exit;
 	}
 
 	//---- EXTERNAL METHODS FOR CONSTRAINTS

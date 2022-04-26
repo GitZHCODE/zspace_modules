@@ -61,7 +61,7 @@ namespace  zSpace
 	*  	\param	[in]	targetNormals			- container of target normals per face. Used only for zVolumePlanar planarisation type.
 	*	\since version 0.0.4
 	*/
-	ZSPACE_MODULES void addPlanarityForces(zComputeMesh &inMesh, zPlanarType type, zPointArray& targetCenters, zVectorArray& targetNormals, double &tolerance, zDoubleArray &planarityDeviations, bool& exit);
+	ZSPACE_MODULES void addPlanarityForces(zComputeMesh &inMesh, zPlanarSolverType type, zPointArray& targetCenters, zVectorArray& targetNormals, double &tolerance, zDoubleArray &planarityDeviations, bool& exit);
 	
 	/*! \brief This method adds the planarisation forces to the input mesh.
 	*

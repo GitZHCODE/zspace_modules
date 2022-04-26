@@ -56,7 +56,7 @@ namespace  zSpace
 		}
 	}
 
-	ZSPACE_MODULES_INLINE void addPlanarityForces(zComputeMesh& inMesh, zPlanarType type, zPointArray& targetCenters, zVectorArray& targetNormals, double& tolerance, zDoubleArray& planarityDeviations, bool& exit)
+	ZSPACE_MODULES_INLINE void addPlanarityForces(zComputeMesh& inMesh, zPlanarSolverType type, zPointArray& targetCenters, zVectorArray& targetNormals, double& tolerance, zDoubleArray& planarityDeviations, bool& exit)
 	{
 		zUtilsCore core;
 		if (type == zQuadPlanar)
@@ -121,9 +121,12 @@ namespace  zSpace
 		// compute gradient and force
 		for (int i = 0; i < inMesh.nV; i++)
 		{
+			zVector gForce;
 			// boundary vertices
 
 			// interval vertices
+
+			inMesh.fnParticles[i].addForce(gForce);
 		}
 		
 	}

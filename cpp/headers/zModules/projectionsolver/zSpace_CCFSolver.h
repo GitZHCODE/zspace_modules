@@ -32,7 +32,7 @@ namespace  zSpace
 	//---- GLOBAL VARIABLES
 	//--------------------------
 	zComputeMesh ccfMesh;
-	zPlanarType ccf_planarisationType;
+	zPlanarSolverType ccf_planarisationType;
 
 	//--------------------------
 	//---- EXTERNAL METHOD FOR CCF
@@ -68,7 +68,7 @@ namespace  zSpace
 	*  	\param	[out]	outDeviations			- output container of planarity deviations per face/polygon.
 	*	\since version 0.0.4
 	*/
-	//extern "C" ZSPACE_MODULES void ccfSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outPlanarityDeviations, double* outGaussianCurvatures);
+	extern "C" ZSPACE_MODULES void ccfSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outPlanarityDeviations, double* outGaussianCurvatures);
 
 	
 	//--------------------------

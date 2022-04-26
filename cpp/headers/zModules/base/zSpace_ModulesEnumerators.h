@@ -22,11 +22,17 @@ namespace zSpace
 	*  @{
 	*/
 
-	/*! \enum	zPlanarType
+	/*! \enum	zPlanarSolverType
+	*	\brief	Types of planarisation solver.
+	*	\since	version 0.0.4
+	*/
+	enum zPlanarSolverType { zQuadPlanar = 400, zVolumePlanar };
+
+	/*! \enum	zMSSolverType
 	*	\brief	Types of planarisation.
 	*	\since	version 0.0.4
 	*/
-	enum zPlanarType { zQuadPlanar = 400, zVolumePlanar };
+	enum zMSSolverType { zMinimiseArea = 410, zRestlength };
 
 	/** @}*/
 }

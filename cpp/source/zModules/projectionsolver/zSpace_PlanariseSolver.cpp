@@ -109,7 +109,7 @@ namespace  zSpace
 
 					// add planarity forces
 					addPlanarityForces(planariseMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
-
+										 
 					// update positions
 					for (int i = 0; i < planariseMesh.fnParticles.size(); i++)
 					{

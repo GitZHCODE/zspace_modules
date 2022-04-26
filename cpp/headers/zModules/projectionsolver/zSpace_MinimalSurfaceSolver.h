@@ -32,6 +32,7 @@ namespace  zSpace
 	//---- GLOBAL VARIABLES
 	//--------------------------
 	zComputeMesh msMesh;
+	zMSSolverType minimiseType;
 	
 	//--------------------------
 	//---- EXTERNAL METHOD FOR Minimal Surface
@@ -46,11 +47,12 @@ namespace  zSpace
 	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
 	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
 	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
+	*  	\param	[in]	minAreaSolver			- input boolean to set minimimal surface solver type - minimise area or rest length method.
 	*  	\param	[out]	outMeanCurvature		- output container of mean curvature per vertex.
 	*	\return			bool					- output boolean - true if setup is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outMeanCurvature);
+	extern "C" ZSPACE_MODULES bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool minAreaSolver, double* outMeanCurvature);
 
 	/*! \brief This method planarises the input quad mesh using the closest distance between diagonals as the tolerance test.
 	*
@@ -64,9 +66,10 @@ namespace  zSpace
 	*  	\param	[in]	tolerance				- input planarity tolerance.
 	*  	\param	[out]	outVertexPositions		- output container of vertex positions. Collapsed 1D array of size numVerts * 3.
 	*  	\param	[out]	outDeviations			- output container of planarity deviations per face/polygon.
+	*	\return			bool					- output boolean - true if convergence is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES void msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outMeanCurvatures);
+	extern "C" ZSPACE_MODULES int msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outMeanCurvatures);
 
 	
 	//--------------------------

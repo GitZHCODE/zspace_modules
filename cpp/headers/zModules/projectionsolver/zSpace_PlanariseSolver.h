@@ -32,7 +32,7 @@ namespace  zSpace
 	//---- GLOBAL VARIABLES
 	//--------------------------
 	zComputeMesh planariseMesh;
-	zPlanarType planarisationType;
+	zPlanarSolverType planarisationType;
 
 	//--------------------------
 	//---- EXTERNAL METHODS FOR PLANARISATION
