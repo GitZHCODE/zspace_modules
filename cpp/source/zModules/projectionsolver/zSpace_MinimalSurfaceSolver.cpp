@@ -17,44 +17,11 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR Minimal Surface
 
-	ZSPACE_MODULES_INLINE bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool minAreaSolver, double* outMeanCurvature)
-	{
-		bool out = false;
-
-		if (_vertexPositions && _polyCounts && _polyConnects && _triCounts && _triConnects && outMeanCurvature)
-		{
-			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, true, msMesh);
-
-			// set triangles and matrices for igl method call
-			setTriangles(msMesh, numFaces, _triCounts, _triConnects);
-			updateMatrixV(msMesh);
-			updateMatrixFTris(msMesh);
-			
-			// set ms solver type
-			if (minAreaSolver) 	minimiseType = zMinimiseArea;
-			else minimiseType = zRestlength;
-			
-			//compute mean curvature
-			VectorXd vMeanCurvature;
-			MatrixXd vMeanNormal;
-			computeMeanCurvature(msMesh, vMeanCurvature, vMeanNormal);
-
-			// update deviations
-			for (int i = 0; i < msMesh.nV; i++)
-			{
-				outMeanCurvature[i] = vMeanCurvature[i];
-			}
-
-
-			out = true;
-		}
-
-		return out;
-	}
-
-	ZSPACE_MODULES_INLINE int msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outMeanCurvatures)
+	ZSPACE_MODULES_INLINE int computeMesh_minSrf(int numIterations, bool minAreaSolver, double tolerance, double* outVertexPositions, double* outMeanCurvatures)
 	{
 		bool exit = false;
+
+		zMSSolverType minimiseType = (minAreaSolver) ? zMinimiseArea : minimiseType;
 
 		VectorXd vMeanCurvature;
 		MatrixXd vMeanNormal;
@@ -62,12 +29,8 @@ namespace  zSpace
 		float springconstant = 1;		
 
 		zFloatArray restLengths;
-		restLengths.assign(msMesh.nE, 0.001);
+		restLengths.assign(compMesh.nE, 0.01);
 
-		for (int i = 0; i < msMesh.nV; i++)
-		{
-			msMesh.fnParticles[i].setMass(1);
-		}
 		
 		for (int i = 0; i < numIterations; i++)
 		{
@@ -77,56 +40,49 @@ namespace  zSpace
 				if (minimiseType == zMinimiseArea)
 				{
 					exit = true;
-					addMinimizeAreaForces(msMesh, tolerance, vMeanCurvature, exit);
+					addMinimizeAreaForces(compMesh, tolerance, vMeanCurvature, exit);
 				}
 								
 				//Restlength Relaxation Method			
 				if (minimiseType == zRestlength)
 				{
-					addSpringForce(msMesh, restLengths, springconstant);
+					addSpringForce(compMesh, restLengths, springconstant);
 				}
 
 				// update positions
-				for (int i = 0; i < msMesh.fnParticles.size(); i++)
+				for (int i = 0; i < compMesh.fnParticles.size(); i++)
 				{					
-					msMesh.fnParticles[i].integrateForces(0.1, zIntergrationType::zRK4);
-					msMesh.fnParticles[i].updateParticle(true,true,true);
+					compMesh.fnParticles[i].integrateForces(dT, intType);
+					compMesh.fnParticles[i].updateParticle(true,true,true);
 				}
 
 				// update matrix positions
-				updateMatrixV(msMesh);
+				updateMatrixV(compMesh);
 			}
 		}
 
 		// output
-		computeMeanCurvature(msMesh, vMeanCurvature, vMeanNormal);
+		computeMeanCurvature(compMesh, vMeanCurvature, vMeanNormal);
 
-		for (int i = 0; i < msMesh.vertexPositions.size(); i++)
+		for (int i = 0; i < compMesh.vertexPositions.size(); i++)
 		{
-			outVertexPositions[i * 3 + 0] = msMesh.vertexPositions[i].x;
-			outVertexPositions[i * 3 + 1] = msMesh.vertexPositions[i].y;
-			outVertexPositions[i * 3 + 2] = msMesh.vertexPositions[i].z;
+			outVertexPositions[i * 3 + 0] = compMesh.vertexPositions[i].x;
+			outVertexPositions[i * 3 + 1] = compMesh.vertexPositions[i].y;
+			outVertexPositions[i * 3 + 2] = compMesh.vertexPositions[i].z;
 		}
 
-		for (int i = 0; i < msMesh.nV; i++)
+		exit = true;
+		for (int i = 0; i < compMesh.nV; i++)
 		{
 			outMeanCurvatures[i] = vMeanCurvature(i);
 
-			if (vMeanCurvature(i) < tolerance) exit = false;
+			if (vMeanCurvature(i) > tolerance) exit = false;
 		}
-
-
 
 		return exit;
 	}
 
-	//---- EXTERNAL METHODS FOR CONSTRAINTS
 
-	ZSPACE_MODULES_INLINE void msSolver_setFixed(int* _fixedVertices, int numFixed)
-	{	
-
-		setFixed(msMesh, _fixedVertices, numFixed);
-	}
 
 }
 

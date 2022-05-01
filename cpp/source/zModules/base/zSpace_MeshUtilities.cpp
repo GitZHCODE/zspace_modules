@@ -15,6 +15,11 @@
 
 namespace  zSpace
 {
+
+	//----  SET EXTERN VARIABLES
+	
+	zComputeMesh compMesh;
+
 	//----  CREATE METHODS
 	
 	ZSPACE_MODULES_INLINE void createMeshOBJ(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, zObjMesh& out_mesh)
@@ -308,6 +313,61 @@ namespace  zSpace
 			fDeviations[j] = pA.distanceTo(pB);
 		}
 		
+	}
+
+	ZSPACE_MODULES_INLINE void computeBounds(zComputeMesh& inMesh, zDomainVector& bounds)
+	{
+		bounds.min.x = bounds.min.y = bounds.min.z = std::numeric_limits<float>::max();
+		bounds.max.x = bounds.max.y = bounds.max.z = std::numeric_limits<float>::min();
+
+		for (auto& p : inMesh.vertexPositions)
+		{
+			if (p.x < bounds.min.x) bounds.min.x = p.x;
+			if (p.y < bounds.min.y) bounds.min.y = p.y;
+			if (p.z < bounds.min.z) bounds.min.z = p.z;
+
+			if (p.x > bounds.max.x) bounds.max.x = p.x;
+			if (p.y > bounds.max.y) bounds.max.y = p.y;
+			if (p.z > bounds.max.z) bounds.max.z = p.z;
+		}
+	}
+
+	//----  EXTERN METHODS
+	ZSPACE_MODULES_INLINE int computeMesh_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces)
+	{
+		bool out = false;
+
+		if (_vertexPositions && _polyCounts && _polyConnects)
+		{
+			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, true, compMesh);
+			updateMatrixV(compMesh);
+
+			// set triangles and matrices for igl method call
+			if (_triCounts && _triConnects)
+			{
+				setTriangles(compMesh, numFaces, _triCounts, _triConnects);
+				updateMatrixFTris(compMesh);				
+			}
+
+			out = true;
+		}
+
+		return out;
+	}
+
+	ZSPACE_MODULES_INLINE int heMesh_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces)
+	{
+		bool out = false;
+		if (_vertexPositions && _polyCounts && _polyConnects )
+		{
+			// create mesh obj
+			createMeshOBJ(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, o_Mesh);
+
+			zFnMesh fnMesh(o_Mesh);
+			if (fnMesh.numVertices() > 0) out = true;
+		}
+
+		return out;
 	}
 
 }

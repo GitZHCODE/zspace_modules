@@ -12,8 +12,8 @@
 
 
 
-#ifndef ZSPACE_MODULES_FACTORY_H
-#define ZSPACE_MODULES_FACTORY_H
+#ifndef ZSPACE_MODULES_MESHUTILS_H
+#define ZSPACE_MODULES_MESHUTILS_H
 
 
 
@@ -36,6 +36,12 @@ namespace  zSpace
 	//--------------------------
 	//---- GLOBAL VARIABLES
 	//--------------------------
+	
+	/*!	\brief global compute mesh variable used by all compute methods */
+	extern "C" zComputeMesh compMesh;
+
+	/*!<\brief global HE mesh variable. */
+	extern "C" zObjMesh o_Mesh;
 
 	//--------------------------
 	//----  CREATE METHODS
@@ -101,7 +107,7 @@ namespace  zSpace
 	//----  COMPUTE METHODS
 	//--------------------------
 
-		/*! \brief This utility method computes the polyhedral volumes and centers of each face of the mesh.
+	/*! \brief This utility method computes the polyhedral volumes and centers of each face of the mesh.
 	*
 	*	\param	[in]	inMesh					- input compute mesh object.
 	*  	\param	[out]	fCenters				- output container of face center positions.
@@ -126,6 +132,46 @@ namespace  zSpace
 	*	\since version 0.0.4
 	*/
 	ZSPACE_MODULES void computeQuadPlanarityDeviation(zComputeMesh& inMesh, zDoubleArray& fDeviations);
+
+	/*! \brief This utility method computes the polyhedral volumes and centers of each face of the mesh.
+	*
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*  	\param	[out]	bounds					- output domain of bounds.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void computeBounds(zComputeMesh& inMesh, zDomainVector &bounds);
+
+
+	//--------------------------
+	//----  EXTERN METHODS
+	//--------------------------
+
+	/*! \brief This method initialises the global compute mesh object.
+	*
+	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
+	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
+	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
+	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
+	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
+	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
+	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
+	*	\return			int						- output boolean - true if setup is successful.
+	*	\since version 0.0.4
+	*/
+	extern "C" ZSPACE_MODULES int computeMesh_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces);
+
+
+	/*! \brief This method initialises the global half edge mesh object.
+	*
+	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
+	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
+	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
+	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
+	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
+	*	\return			int						- output boolean - true if setup is successful.
+	*	\since version 0.0.4
+	*/
+	extern "C" ZSPACE_MODULES int heMesh_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces);
 
 }
 

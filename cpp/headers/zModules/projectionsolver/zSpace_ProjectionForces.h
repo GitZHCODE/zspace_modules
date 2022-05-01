@@ -88,27 +88,6 @@ namespace  zSpace
 	ZSPACE_MODULES void addMinimizeAreaForces(zComputeMesh& inMesh, double& tolerance, VectorXd& meanCurvatures, bool& exit);
 
 
-	//--------------------------
-	//---- SET METHODS 
-	//--------------------------
-
-	/*! \brief This method makes the vertices specified by the input contatiner fixed.
-	*
-	*	\param	[in]	inMesh					- input compute mesh object.		
-	*	\param	[in]	_fixedVertices			- input container of anchor point indicies.
-	*	\param	[in]	numFixed				- number of fixed vertices.
-	*	\since version 0.0.4
-	*/
-	ZSPACE_MODULES void setFixed(zComputeMesh& inMesh, int* _fixedVertices, int numFixed);
-
-	/*! \brief This method set the mass of the vertices specified by the input contatiner.
-	*
-	*	\param	[in]	inMesh					- input compute mesh object.
-	*	\param	[in]	_vMass					- input container of vertex mass.
-	*	\param	[in]	numVerts				- number of vertices. Should match the number of vertices of the mesh.
-	*	\since version 0.0.4
-	*/
-	ZSPACE_MODULES void setMass(zComputeMesh& inMesh, int* _vMass, int numVerts);
 }
 
 #if defined(ZSPACE_MODULES_DYNAMIC_LIBRARY)

@@ -23,36 +23,16 @@ using namespace std;
 #include <headers/zModules/base/zSpace_Modules.h>
 #include <headers/zModules/base/zSpace_ComputeMesh.h>
 #include <headers/zModules/base/zSpace_MeshUtilities.h>
+#include <headers/zModules/base/zSpace_SolverUtilities.h>
 
 #include <headers/zModules/projectionsolver/zSpace_ProjectionForces.h>
 
 namespace  zSpace
 {
-	//--------------------------
-	//---- GLOBAL VARIABLES
-	//--------------------------
-	zComputeMesh msMesh;
-	zMSSolverType minimiseType;
 	
 	//--------------------------
 	//---- EXTERNAL METHOD FOR Minimal Surface
 	//--------------------------
-
-	/*! \brief This method initialises the solver for planarisation.
-	*
-	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
-	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
-	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
-	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
-	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
-	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
-	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
-	*  	\param	[in]	minAreaSolver			- input boolean to set minimimal surface solver type - minimise area or rest length method.
-	*  	\param	[out]	outMeanCurvature		- output container of mean curvature per vertex.
-	*	\return			bool					- output boolean - true if setup is successful.
-	*	\since version 0.0.4
-	*/
-	extern "C" ZSPACE_MODULES bool msSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool minAreaSolver, double* outMeanCurvature);
 
 	/*! \brief This method planarises the input quad mesh using the closest distance between diagonals as the tolerance test.
 	*
@@ -69,20 +49,8 @@ namespace  zSpace
 	*	\return			bool					- output boolean - true if convergence is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES int msSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outMeanCurvatures);
+	extern "C" ZSPACE_MODULES int computeMesh_minSrf(int numIterations, bool minAreaSolver, double tolerance, double* outVertexPositions, double* outMeanCurvatures);
 
-	
-	//--------------------------
-	//---- EXTERNAL METHODS FOR CONSTRAINTS
-	//--------------------------
-
-	/*! \brief This method makes the vertices specified by the input contatiner fixed.
-	*
-	*	\param	[in]	_fixedVertices			- input container of anchor point indicies.
-	*	\param	[in]	numFixed				- number of fixed vertices.
-	*	\since version 0.0.4
-	*/
-	extern "C" ZSPACE_MODULES void msSolver_setFixed(int* _fixedVertices, int numFixed);
 }
 
 #if defined(ZSPACE_MODULES_DYNAMIC_LIBRARY)

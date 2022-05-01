@@ -19,7 +19,7 @@ namespace  zSpace
 
 	ZSPACE_MODULES_INLINE zSparseMatrix getEdgeNodeMatrix(int numRows)
 	{
-		int n_v = fdmMesh.nV;
+		int n_v = compMesh.nV;
 
 		zSparseMatrix out(numRows, n_v);
 		out.setZero();
@@ -28,7 +28,7 @@ namespace  zSpace
 
 		vector<zTriplet> coefs; // 1 for from vertex and -1 for to vertex
 
-		for (auto e : fdmMesh.edges)
+		for (auto e : compMesh.edges)
 		{
 			int v1 = e[0];
 			int v2 = e[1];
@@ -65,37 +65,15 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR FDM
 
-	ZSPACE_MODULES_INLINE int fdm_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces)
-	{
-		bool out = false;
-
-		if (_vertexPositions && _polyCounts && _polyConnects )
-		{
-			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces,true, fdmMesh);
-			updateMatrixV(fdmMesh);
-
-			// set triangles and matrices for igl method call
-			if (_triCounts && _triConnects)
-			{
-				setTriangles(fdmMesh, numFaces, _triCounts, _triConnects);
-				updateMatrixFTris(fdmMesh);
-			}					
-
-			out = true;
-		}
-
-		return out;
-	}
-
-	ZSPACE_MODULES_INLINE int fdm_compute(double* vForceDensities, double* vMass,  double* outVertexPositions)
+	ZSPACE_MODULES_INLINE int computeMesh_fdm(double* vForceDensities, double* vMass,  double* outVertexPositions)
 	{
 
 		bool positiveDensities = true;
 
-		int n_v = fdmMesh.nV;
-		int n_edges = fdmMesh.nE;
+		int n_v = compMesh.nV;
+		int n_edges = compMesh.nE;
 
-		for (auto e: fdmMesh.edges)
+		for (auto e: compMesh.edges)
 		{		
 			int v1 = e[0];
 			int v2 = e[1];
@@ -104,7 +82,7 @@ namespace  zSpace
 		}
 
 		// POSITION MATRIX
-		MatrixXd X = fdmMesh.V;
+		MatrixXd X = compMesh.V;
 
 		// EDGE NODE MATRIX
 		zSparseMatrix C = getEdgeNodeMatrix(n_edges);
@@ -113,10 +91,10 @@ namespace  zSpace
 		VectorXd q(n_edges);
 		int FD_EdgesCounter = 0;
 
-		for (int i =0; i< fdmMesh.edges.size(); i++)
+		for (int i =0; i< compMesh.edges.size(); i++)
 		{
-			int v1 = fdmMesh.edges[i][0];
-			int v2 = fdmMesh.edges[i][1];
+			int v1 = compMesh.edges[i][0];
+			int v2 = compMesh.edges[i][1];
 
 			if (!vFixed[v1] || !vFixed[v2])
 			{
@@ -204,37 +182,24 @@ namespace  zSpace
 		{
 			int id = freeVertices[i];			
 
-			fdmMesh.vertexPositions[id].x = Xn(i, 0);
-			fdmMesh.vertexPositions[id].y = Xn(i, 1);
-			fdmMesh.vertexPositions[id].z = Xn(i, 2);
+			compMesh.vertexPositions[id].x = Xn(i, 0);
+			compMesh.vertexPositions[id].y = Xn(i, 1);
+			compMesh.vertexPositions[id].z = Xn(i, 2);
 		}
 		
 			
 		// output
-		for (int i = 0; i < fdmMesh.vertexPositions.size(); i++)
+		for (int i = 0; i < compMesh.vertexPositions.size(); i++)
 		{
-			outVertexPositions[i * 3 + 0] = fdmMesh.vertexPositions[i].x;
-			outVertexPositions[i * 3 + 1] = fdmMesh.vertexPositions[i].y;
-			outVertexPositions[i * 3 + 2] = fdmMesh.vertexPositions[i].z;
+			outVertexPositions[i * 3 + 0] = compMesh.vertexPositions[i].x;
+			outVertexPositions[i * 3 + 1] = compMesh.vertexPositions[i].y;
+			outVertexPositions[i * 3 + 2] = compMesh.vertexPositions[i].z;
 		}
 					
 		return true;
 	}
 
-	//---- EXTERNAL METHODS FOR CONSTRAINTS
 
-	ZSPACE_MODULES_INLINE void fdm_setFixed(int* _fixedVertices, int numFixed)
-	{
-		vFixed.clear();
-		vFixed.assign(fdmMesh.nV, false);
-
-		setFixed(fdmMesh, _fixedVertices, numFixed);	
-
-		for (int i = 0; i < numFixed; i++)
-		{
-			vFixed[_fixedVertices[i]] = true;
-		}
-	}
 
 }
 

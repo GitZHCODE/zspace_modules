@@ -69,6 +69,18 @@
     <ClCompile Include="..\..\..\cpp\source\zModules\statics\zSpace_FDM.cpp">
       <Filter>Source Files\4_statics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\geometryprocessing\zSpace_Streamlines.cpp">
+      <Filter>Source Files\3_geometryProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\base\zSpace_SolverUtilities.cpp">
+      <Filter>Source Files\0_base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\source\zModules\base\zSpace_SpatialBinUtilites.cpp">
+      <Filter>Source Files\0_base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\cpp\headers\zModules\base\zSpace_SpatialBinUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_ComputeMesh.h">
@@ -103,6 +115,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\cpp\headers\zModules\statics\zSpace_FDM.h">
       <Filter>Header Files\4_statics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\geometryprocessing\zSpace_Streamlines.h">
+      <Filter>Header Files\3_geometryProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_SolverUtilities.h">
+      <Filter>Header Files\0_base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\cpp\headers\zModules\base\zSpace_SpatialBinUtilities.h">
+      <Filter>Header Files\0_base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

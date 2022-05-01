@@ -23,17 +23,12 @@ using namespace std;
 #include <headers/zModules/base/zSpace_Modules.h>
 #include <headers/zModules/base/zSpace_ComputeMesh.h>
 #include <headers/zModules/base/zSpace_MeshUtilities.h>
+#include <headers/zModules/base/zSpace_SolverUtilities.h>
 
 #include <headers/zModules/projectionsolver/zSpace_ProjectionForces.h>
 
 namespace  zSpace
 {
-	//--------------------------
-	//---- GLOBAL VARIABLES
-	//--------------------------
-	zComputeMesh fdmMesh;
-	zBoolArray vFixed;
-
 	//--------------------------
 	//---- METHODS
 	//--------------------------
@@ -68,20 +63,6 @@ namespace  zSpace
 	//---- EXTERNAL METHODS FOR FDM
 	//--------------------------
 
-	/*! \brief This method initialises the solver for planarisation.
-	*
-	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
-	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
-	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
-	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
-	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
-	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
-	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
-	*	\return			int						- output boolean - true if setup is successful.
-	*	\since version 0.0.4
-	*/
-	extern "C" ZSPACE_MODULES int fdm_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces);
-
 	/*! \brief This method computes the result based on the force density method.
 	*
 	*	\details Based on Schek, H-J. "The force density method for form finding and computation of general networks." Computer methods in applied mechanics and engineering 3.1 (1974): 115-134. (https://www.sciencedirect.com/science/article/pii/0045782574900450)
@@ -92,19 +73,7 @@ namespace  zSpace
 	*	\return			int						- output boolean - true if fdm is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES int fdm_compute(double *vForceDensities, double* vMass, double* outVertexPositions);
-
-	//--------------------------
-	//---- EXTERNAL METHODS FOR CONSTRAINTS
-	//--------------------------
-
-	/*! \brief This method makes the vertices specified by the input contatiner fixed.
-	*
-	*	\param	[in]	_fixedVertices			- input container of anchor point indicies.
-	*	\param	[in]	numFixed				- number of fixed vertices.
-	*	\since version 0.0.4
-	*/
-	extern "C" ZSPACE_MODULES void fdm_setFixed(int* _fixedVertices, int numFixed);
+	extern "C" ZSPACE_MODULES int computeMesh_fdm(double *vForceDensities, double* vMass, double* outVertexPositions);
 
 }
 

@@ -17,75 +17,10 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR PLANARISATION
 
-	ZSPACE_MODULES_INLINE int planariseSolver_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, bool volPlanarise, double* outDeviations)
+	ZSPACE_MODULES_INLINE void computeMesh_planarise(int numIterations, bool volPlanarise, double tolerance, double* outVertexPositions, double* outDeviations)
 	{
-		bool out = false;
+		zPlanarSolverType planarisationType = (volPlanarise)? zVolumePlanar : zQuadPlanar ;
 
-		if (_vertexPositions && _polyCounts && _polyConnects && outDeviations)
-		{
-			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces,true, planariseMesh);
-
-			if (_triCounts && _triConnects) setTriangles(planariseMesh, numFaces, _triCounts, _triConnects);
-		
-			
-			// if volumetric planarise add triangles to the compute mesh
-			if (volPlanarise)
-			{
-				// set planarity type
-				planarisationType = zVolumePlanar;
-
-				
-				if (!_triCounts || !_triConnects)
-				{
-					zObjMesh oMesh;
-					createMeshOBJ(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, oMesh);
-
-					zFnMesh fnMesh(oMesh);
-					fnMesh.getMeshTriangles(planariseMesh.triangles);
-				}										
-
-				// compute face normals
-				zVectorArray fNormals;
-				computeFaceNormals(planariseMesh, fNormals);
-
-				zPointArray fCenters;
-				zDoubleArray fVolumes;
-				
-				// compute volumes
-				computeFaceVolumes(planariseMesh, fCenters, fVolumes);
-
-				// update deviations
-				for (int i = 0; i < fVolumes.size(); i++)
-				{
-					outDeviations[i] = fVolumes[i];
-				}											
-
-			}
-			else
-			{	
-				// set planarity type
-				planarisationType = zQuadPlanar;
-
-				// compute planarity deviations
-				zDoubleArray fDeviations;
-				computeQuadPlanarityDeviation(planariseMesh, fDeviations);
-
-				// update deviations							
-				for (int i = 0; i < fDeviations.size(); i++)
-				{
-					outDeviations[i] = fDeviations[i];
-				}
-			}
-
-
-			out = true;
-		}
-
-		return out;
-	}
-
-	ZSPACE_MODULES_INLINE void planariseSolver_compute(int numIterations, double tolerance, double* outVertexPositions, double* outDeviations)
-	{
 		zDoubleArray fDeviations;
 
 		zPointArray fCenters;
@@ -96,31 +31,34 @@ namespace  zSpace
 			bool exit = false;
 
 			// compute face normals			
-			computeFaceNormals(planariseMesh, fNormals);
+			computeFaceNormals(compMesh, fNormals);
 						
 			for (int i = 0; i < numIterations; i++)
 			{
 				// compute volumes
-				computeFaceVolumes(planariseMesh, fCenters, fDeviations);
+				computeFaceVolumes(compMesh, fCenters, fDeviations);
 
 				if (!exit)
 				{
 					exit = true;
 
 					// add planarity forces
-					addPlanarityForces(planariseMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
+					addPlanarityForces(compMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
 										 
 					// update positions
-					for (int i = 0; i < planariseMesh.fnParticles.size(); i++)
+					for (int i = 0; i < compMesh.fnParticles.size(); i++)
 					{
-						planariseMesh.fnParticles[i].integrateForces(0.5, zIntergrationType::zRK4);
-						planariseMesh.fnParticles[i].updateParticle(true);
+						compMesh.fnParticles[i].integrateForces(dT, intType);
+						compMesh.fnParticles[i].updateParticle(true);
 					}
 				}
 
-				computeFaceNormals(planariseMesh, fNormals);
+				computeFaceNormals(compMesh, fNormals);
 
 			}
+
+			// compute deviations if number interation is zero
+			if(numIterations == 0) computeFaceVolumes(compMesh, fCenters, fDeviations);
 		
 		}
 		else if (planarisationType == zQuadPlanar)
@@ -130,34 +68,37 @@ namespace  zSpace
 			for (int i = 0; i < numIterations; i++)
 			{
 				// compute deviations
-				computeQuadPlanarityDeviation(planariseMesh, fDeviations);
+				computeQuadPlanarityDeviation(compMesh, fDeviations);
 
 				if (!exit)
 				{
 					exit = true;
 
 					// compute forces
-					addPlanarityForces(planariseMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
+					addPlanarityForces(compMesh, planarisationType, fCenters, fNormals, tolerance, fDeviations, exit);
 
 					// update positions
-					for (int i = 0; i < planariseMesh.fnParticles.size(); i++)
+					for (int i = 0; i < compMesh.fnParticles.size(); i++)
 					{
-						planariseMesh.fnParticles[i].integrateForces(0.5, zIntergrationType::zRK4);
-						planariseMesh.fnParticles[i].updateParticle(true);
+						compMesh.fnParticles[i].integrateForces(dT, intType);
+						compMesh.fnParticles[i].updateParticle(true);
 					}
 				}
 
 			}
 
+			// compute deviations if number interation is zero
+			if (numIterations == 0) computeQuadPlanarityDeviation(compMesh, fDeviations);
+
 		}
 		
 		// output
 
-		for (int i = 0; i < planariseMesh.vertexPositions.size(); i++)
+		for (int i = 0; i < compMesh.vertexPositions.size(); i++)
 		{
-			outVertexPositions[i * 3 + 0] = planariseMesh.vertexPositions[i].x;
-			outVertexPositions[i * 3 + 1] = planariseMesh.vertexPositions[i].y;
-			outVertexPositions[i * 3 + 2] = planariseMesh.vertexPositions[i].z;
+			outVertexPositions[i * 3 + 0] = compMesh.vertexPositions[i].x;
+			outVertexPositions[i * 3 + 1] = compMesh.vertexPositions[i].y;
+			outVertexPositions[i * 3 + 2] = compMesh.vertexPositions[i].z;
 		}
 
 		for (int i = 0; i < fDeviations.size(); i++)
@@ -165,13 +106,6 @@ namespace  zSpace
 			outDeviations[i] = fDeviations[i];
 		}		
 
-	}
-
-	//---- EXTERNAL METHODS FOR CONSTRAINTS
-
-	ZSPACE_MODULES_INLINE void planariseSolver_setFixed(int* _fixedVertices, int numFixed)
-	{
-		setFixed(planariseMesh, _fixedVertices, numFixed);		
 	}
 
 }
