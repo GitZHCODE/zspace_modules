@@ -48,7 +48,17 @@ namespace  zSpace
 	*	\param	[in]	springConstant			- input spring constant.
 	*	\since version 0.0.4
 	*/
-	ZSPACE_MODULES void addSpringForce(zComputeMesh& inMesh, zFloatArray &restLength , float springConstant = 1 );
+	ZSPACE_MODULES void addSpringForce(zComputeMesh& inMesh, zFloatArray &restLength , double strength = 1);
+
+	/*! \brief This method adds the drag force to the input mesh.
+	*	\details based on https://github.com/Dan-Piker/K2Goals/blob/master/TangentialSmooth.cs
+	*	\param	[in]	inMesh					- input compute mesh object.
+	*	\param	[in]	restLength				- input container of restlengths per edge.
+	*	\param	[in]	springConstant			- input spring constant.
+	*	\since version 0.0.4
+	*/
+	ZSPACE_MODULES void addSmoothnessForce(zComputeMesh& inMesh, double strength = 1);
+
 
 	/*! \brief This method adds the planarisation forces to the input mesh.
 	*
@@ -77,15 +87,13 @@ namespace  zSpace
 	ZSPACE_MODULES void addGaussianForces(zComputeMesh& inMesh, zInt2DArray& cVertices, zBoolArray& vBoundary, double& tolerance,  zDoubleArray& vGaussianCurvatures, bool& exit);
 
 	/*! \brief This method adds the minimize area forces (minimal surface) to the input mesh.
-	*	\details based on http://courses.cms.caltech.edu/cs177/hmw/Hmw2.pdf
+	*	\details based on http://courses.cms.caltech.edu/cs177/hmw/Hmw2.pdf , https://github.com/Dan-Piker/K2Goals/blob/master/SoapFilm.cs
 	*	\param	[in]	inMesh					- input compute mesh object.
 	*	\param	[in]	type					- input planarisation type - zQuadPlanar or zVolumePlanar.
-	* 	\param	[in]	tolerance				- input tolerance value belwo which the force isnt applied.
-	*  	\param	[out]	meanCurvatures			- output container of planarity deviations per face.
-	*  	\param	[out]	exit					- output boolean true if all the planarity deviations are below tolerance.
+	* 	\param	[in]	strength				- input strength of the force.
 	*	\since version 0.0.4
 	*/
-	ZSPACE_MODULES void addMinimizeAreaForces(zComputeMesh& inMesh, double& tolerance, VectorXd& meanCurvatures, bool& exit);
+	ZSPACE_MODULES void addMinimizeAreaForces(zComputeMesh& inMesh, double strength = 1);
 
 
 }

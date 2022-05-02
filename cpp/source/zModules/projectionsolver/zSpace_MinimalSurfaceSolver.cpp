@@ -17,19 +17,17 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS FOR Minimal Surface
 
-	ZSPACE_MODULES_INLINE int computeMesh_minSrf(int numIterations, bool minAreaSolver, double tolerance, double* outVertexPositions, double* outMeanCurvatures)
+	ZSPACE_MODULES_INLINE bool computeMesh_minSrf(int numIterations, bool minAreaSolver, double tolerance, double* outVertexPositions, double* outMeanCurvatures)
 	{
 		bool exit = false;
 
-		zMSSolverType minimiseType = (minAreaSolver) ? zMinimiseArea : minimiseType;
+		zMSSolverType minimiseType = (minAreaSolver) ? zMinimiseArea : zRestlength;
 
 		VectorXd vMeanCurvature;
-		MatrixXd vMeanNormal;
-
-		float springconstant = 1;		
+		MatrixXd vMeanNormal;				
 
 		zFloatArray restLengths;
-		restLengths.assign(compMesh.nE, 0.01);
+		restLengths.assign(compMesh.nE, 0.001);
 
 		
 		for (int i = 0; i < numIterations; i++)
@@ -39,14 +37,18 @@ namespace  zSpace
 				//// Minimize Area Method
 				if (minimiseType == zMinimiseArea)
 				{
-					exit = true;
-					addMinimizeAreaForces(compMesh, tolerance, vMeanCurvature, exit);
+					//exit = true;
+					addMinimizeAreaForces(compMesh, 1);
+
+					addSmoothnessForce(compMesh, 10);					
 				}
 								
 				//Restlength Relaxation Method			
 				if (minimiseType == zRestlength)
 				{
-					addSpringForce(compMesh, restLengths, springconstant);
+					addSpringForce(compMesh, restLengths, 1);
+
+					addSmoothnessForce(compMesh, 1);
 				}
 
 				// update positions
@@ -62,7 +64,8 @@ namespace  zSpace
 		}
 
 		// output
-		computeMeanCurvature(compMesh, vMeanCurvature, vMeanNormal);
+		computeMeanCurvature(compMesh, vMeanCurvature, vMeanNormal);		
+		
 
 		for (int i = 0; i < compMesh.vertexPositions.size(); i++)
 		{
@@ -74,9 +77,9 @@ namespace  zSpace
 		exit = true;
 		for (int i = 0; i < compMesh.nV; i++)
 		{
-			outMeanCurvatures[i] = vMeanCurvature(i);
+			outMeanCurvatures[i] = vMeanCurvature(i);			
 
-			if (vMeanCurvature(i) > tolerance) exit = false;
+			if (!vFixed[i] &&  outMeanCurvatures[i] > tolerance) exit = false;
 		}
 
 		return exit;

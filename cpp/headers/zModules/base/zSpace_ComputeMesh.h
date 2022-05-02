@@ -41,6 +41,9 @@ namespace  zSpace
 		/*!	\brief 2D container of polygon vertex connectivity  */
 		zInt2DArray polygons;
 
+		/*!	\brief 2D container of connected vertice per vertex  */
+		zInt2DArray cVertices;
+
 		/*!	\brief 2D container of edge vertex connectivity  */
 		zInt2DArray edges;			
 

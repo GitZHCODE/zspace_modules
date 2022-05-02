@@ -20,6 +20,8 @@ namespace  zSpace
 	
 	zComputeMesh compMesh;
 
+	zObjMesh o_heMesh;
+
 	//----  CREATE METHODS
 	
 	ZSPACE_MODULES_INLINE void createMeshOBJ(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces, zObjMesh& out_mesh)
@@ -136,6 +138,9 @@ namespace  zSpace
 			}
 		}
 
+		//cVertices
+		outMesh.cVertices.clear();
+		
 		// particles
 		outMesh.fnParticles.clear();
 		outMesh.o_Particles.clear();
@@ -355,15 +360,40 @@ namespace  zSpace
 		return out;
 	}
 
+	ZSPACE_MODULES_INLINE int computeMesh_setCVertices(int* _vertexIndices, int* _cvCounts, int numVerts)
+	{
+		if (numVerts != compMesh.nV) throw std::invalid_argument(" error: input container not matching with compute mesh.");
+
+		if (_vertexIndices && _cvCounts)
+		{
+			compMesh.cVertices.clear();
+			compMesh.cVertices.assign(numVerts,zIntArray());
+
+			int currentIndex = 0;
+			for (int i = 0; i < numVerts; i++)
+			{
+				int num_cVerts = _cvCounts[i];
+
+				for (int j = 0; j < num_cVerts; j++)
+				{
+					compMesh.cVertices[i].push_back(_vertexIndices[currentIndex + j]);
+				}
+
+				currentIndex += num_cVerts;
+			}
+
+		}
+	}
+
 	ZSPACE_MODULES_INLINE int heMesh_initialise(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int numVerts, int numFaces)
 	{
 		bool out = false;
 		if (_vertexPositions && _polyCounts && _polyConnects )
 		{
 			// create mesh obj
-			createMeshOBJ(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, o_Mesh);
+			createMeshOBJ(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, o_heMesh);
 
-			zFnMesh fnMesh(o_Mesh);
+			zFnMesh fnMesh(o_heMesh);
 			if (fnMesh.numVertices() > 0) out = true;
 		}
 

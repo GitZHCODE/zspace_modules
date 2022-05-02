@@ -35,7 +35,7 @@ namespace  zSpace
 		}
 	}
 
-	ZSPACE_MODULES_INLINE void addSpringForce(zComputeMesh& inMesh, zFloatArray& restLength, float springConstant)
+	ZSPACE_MODULES_INLINE void addSpringForce(zComputeMesh& inMesh, zFloatArray& restLength, double strength)
 	{
 		for (int j = 0; j < inMesh.nE; j++)
 		{
@@ -45,8 +45,10 @@ namespace  zSpace
 			zVector e = inMesh.vertexPositions[v2] - inMesh.vertexPositions[v1];
 			float eLen = e.length();
 			e.normalize();
-						
-			float val = springConstant * (eLen - restLength[j]);
+					
+			float restLen = restLength[j];
+
+			float val = strength * (eLen - restLen);
 			zVector pForce_v1 = e * (val * 0.5);				
 
 			zVector pForce_v2 = pForce_v1 * -1;			
@@ -54,6 +56,48 @@ namespace  zSpace
 			inMesh.fnParticles[v1].addForce(pForce_v1);
 			inMesh.fnParticles[v2].addForce(pForce_v2);
 		}
+	}
+
+	ZSPACE_MODULES_INLINE void addSmoothnessForce(zComputeMesh& inMesh, double strength)
+	{
+		for (int j = 0; j < inMesh.nV; j++)
+		{
+			int numCVerts = inMesh.cVertices[j].size();
+			
+			zPoint Avg;
+			zVectorArray Vecs;
+			Vecs.assign(numCVerts, zVector()); 
+
+			for (int i = 0; i < numCVerts; i++)
+			{
+				Avg = Avg + inMesh.vertexPositions[inMesh.cVertices[j][i]];;
+				Vecs[i] = inMesh.vertexPositions[inMesh.cVertices[j][i]] - inMesh.vertexPositions[j];
+			}
+
+			double Inv = 1.0 / (numCVerts);
+			Avg = Avg * Inv;
+			zVector Smooth =  (Avg - inMesh.vertexPositions[j]) * 0.5;
+
+			zVector Normal;
+			for (int i = 0; i < Vecs.size(); i++)
+			{
+				Normal += (Vecs[i] ^ Vecs[(i + 1) % Vecs.size()]);
+			}
+			Normal.normalize();
+			Smooth -= Normal * (Normal * Smooth);
+
+			zVector pForce1 = Smooth * strength;
+			inMesh.fnParticles[j].addForce(pForce1);
+			
+			/*Smooth *= -Inv;
+			zVector pForce2 = Smooth * smoothnessConstant;
+			for (int i = 0; i < numCVerts; i++)
+			{
+				inMesh.fnParticles[inMesh.cVertices[j][i]].addForce(pForce2);
+			}*/
+		}
+
+		
 	}
 
 	ZSPACE_MODULES_INLINE void addPlanarityForces(zComputeMesh& inMesh, zPlanarSolverType type, zPointArray& targetCenters, zVectorArray& targetNormals, double& tolerance, zDoubleArray& planarityDeviations, bool& exit)
@@ -131,60 +175,42 @@ namespace  zSpace
 		
 	}
 
-	ZSPACE_MODULES_INLINE void addMinimizeAreaForces(zComputeMesh& inMesh, double& tolerance, VectorXd& meanCurvatures, bool& exit)
-	{
-		//compute mean curvature
-		MatrixXd HN;	 
-
-		computeMeanCurvature(inMesh, meanCurvatures, HN);
-
-		exit = false;
-
-		for (int i = 0; i < inMesh.nV; i++)
+	ZSPACE_MODULES_INLINE void addMinimizeAreaForces(zComputeMesh& inMesh, double strength)
+	{	
+		int currentIndex = 0;
+		for (int i = 0; i < inMesh.nF; i++)
 		{
-			if (meanCurvatures[i] > tolerance)
-			{
-				exit = false;
+			int numTrisVerts = inMesh.triangles[i].size();
 
-				zVector pForce(HN(i, 0), HN(i, 1), HN(i, 2));
-				pForce.normalize();
-				pForce *= (meanCurvatures(i) * -1);
-				inMesh.fnParticles[i].addForce(pForce);
+			for (int j = 0; j < numTrisVerts; j += 3)
+			{
+				zPoint PA = inMesh.vertexPositions[inMesh.triangles[i][j + 0]];
+				zPoint PB = inMesh.vertexPositions[inMesh.triangles[i][j + 1]];
+				zPoint PC = inMesh.vertexPositions[inMesh.triangles[i][j + 2]];
+
+				zVector AB = PB - PA;
+				zVector BC = PC - PB;
+				zVector CA = PA - PC;
+
+				zVector Normal = AB ^ BC; 
+				Normal.normalize();
+
+				zVector V0 = (BC ^ Normal) * 0.5;
+				zVector V1 = (CA ^ Normal) * 0.5;  
+				
+				zVector pForce0 = V0 * strength;
+				inMesh.fnParticles[inMesh.triangles[i][j + 0]].addForce(pForce0);
+
+				zVector pForce1 = V1 * strength;
+				inMesh.fnParticles[inMesh.triangles[i][j + 1]].addForce(pForce1);
+
+				zVector pForce2 = ((V0 * -1) - V1) * strength;
+				inMesh.fnParticles[inMesh.triangles[i][j + 2]].addForce(pForce2);				
 			}
+		}
+
 		
-			meanCurvatures[i] = meanCurvatures(i);
-		}
 		
-	}
-
-	//---- EXTERNAL METHODS FOR CONSTRAINTS
-
-	ZSPACE_MODULES_INLINE void setFixed(zComputeMesh& inMesh, int* _fixedVertices, int numFixed)
-	{
-		if (numFixed >= inMesh.nV) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
-
-		// set fixed
-		if (_fixedVertices)
-		{
-			for (int i = 0; i < numFixed; i++)
-			{
-				inMesh.fnParticles[_fixedVertices[i]].setFixed(true);
-			}
-		}
-	}
-
-	ZSPACE_MODULES_INLINE void setMass(zComputeMesh& inMesh, int* _vMass, int numVerts)
-	{
-		if (numVerts != inMesh.vertexPositions.size()) throw std::invalid_argument(" error: number of fixed vertices greater than number of vertices.");
-
-		// set mass
-		if (_vMass)
-		{
-			for (int i = 0; i < numVerts; i++)
-			{
-				inMesh.fnParticles[i].setMass(_vMass[i]);
-			}
-		}
 	}
 
 }

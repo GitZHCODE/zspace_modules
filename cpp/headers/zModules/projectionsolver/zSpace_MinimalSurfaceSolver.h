@@ -49,7 +49,7 @@ namespace  zSpace
 	*	\return			bool					- output boolean - true if convergence is successful.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES int computeMesh_minSrf(int numIterations, bool minAreaSolver, double tolerance, double* outVertexPositions, double* outMeanCurvatures);
+	extern "C" ZSPACE_MODULES bool computeMesh_minSrf(int numIterations, bool minAreaSolver, double tolerance, double* outVertexPositions, double* outMeanCurvatures);
 
 }
 

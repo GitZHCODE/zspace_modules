@@ -50,24 +50,18 @@ namespace  zSpace
 
 	//---- EXTERNAL METHODS 
 
-	ZSPACE_MODULES_INLINE int curvatureDirections(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outpV1, double* outpV2, double* outpD1, double* outpD2)
+	ZSPACE_MODULES_INLINE bool curvatureDirections( double* outpV1, double* outpV2, double* outpD1, double* outpD2)
 	{
 		bool out = false;
 
-		if (_vertexPositions && _polyCounts && _polyConnects && _triCounts && _triConnects && outpV1 && outpV2 && outpD1 && outpD2)
+		if ( outpV1 && outpV2 && outpD1 && outpD2)
 		{
-			zComputeMesh inMesh;
-			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, false, inMesh);
-			setTriangles(inMesh, numFaces, _triCounts, _triConnects);
-			updateMatrixV(inMesh);
-			updateMatrixFTris(inMesh);
-
 			// Compute curvature directions via quadric fitting
 			MatrixXd PD1, PD2;
 			VectorXd PV1, PV2;
-			computeCurvatureDirections(inMesh, PV1, PV2, PD1, PD2);
+			computeCurvatureDirections(compMesh, PV1, PV2, PD1, PD2);
 			
-			for (int i = 0; i < numVerts; i++)
+			for (int i = 0; i < compMesh.nV; i++)
 			{
 				outpV1[i] = PV1(i);
 				outpV2[i] = PV2(i);
@@ -87,22 +81,17 @@ namespace  zSpace
 		return out;
 	}
 
-	ZSPACE_MODULES_INLINE int gaussianCurvature(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outGV)
+	ZSPACE_MODULES_INLINE bool gaussianCurvature(double* outGV)
 	{
 		bool out = false;
 
-		if (_vertexPositions && _polyCounts && _polyConnects && _triCounts && _triConnects && outGV)
-		{
-			zComputeMesh inMesh;
-			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, false, inMesh);
-			setTriangles(inMesh, numFaces, _triCounts, _triConnects);
-			updateMatrixV(inMesh);
-			updateMatrixFTris(inMesh);
+		if ( outGV)
+		{		
 
 			VectorXd K;
-			computeGaussianCurvature(inMesh, K);
+			computeGaussianCurvature(compMesh, K);
 
-			for (int i = 0; i < numVerts; i++)
+			for (int i = 0; i < compMesh.nV; i++)
 			{
 				outGV[i] = K[i];
 			}
@@ -113,26 +102,19 @@ namespace  zSpace
 		return out;
 	}
 
-	ZSPACE_MODULES_INLINE int meanCurvature(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outHV, double* outHN)
+	ZSPACE_MODULES_INLINE bool meanCurvature( double* outHV, double* outHN)
 	{
 		bool out = false;
 
-		if (_vertexPositions && _polyCounts && _polyConnects && _triCounts && _triConnects && outHV && outHN)
+		if (outHV && outHN)
 		{
-			zComputeMesh inMesh;
-			createComputeMesh(_vertexPositions, _polyCounts, _polyConnects, numVerts, numFaces, false, inMesh);
-			setTriangles(inMesh, numFaces, _triCounts, _triConnects);
-			updateMatrixV(inMesh);
-			updateMatrixFTris(inMesh);
-
-
 			// Alternative discrete mean curvature
 			MatrixXd HN;
 			VectorXd HV;
 
-			computeMeanCurvature(inMesh, HV, HN);
+			computeMeanCurvature(compMesh, HV, HN);
 
-			for (int i = 0; i < numVerts; i++)
+			for (int i = 0; i < compMesh.nV; i++)
 			{
 				outHV[i] = HV(i);
 

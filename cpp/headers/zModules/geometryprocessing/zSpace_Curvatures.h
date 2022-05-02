@@ -79,51 +79,30 @@ namespace  zSpace
 	//---- EXTERNAL METHODS
 	//--------------------------
 
-	/*! \brief This method computes the principal curvature directions of the input triangle mesh.
+	/*! \brief This method computes the principal curvature directions of the global compute mesh.
 	*
-	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
-	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
-	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
-	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
-	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
-	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
-	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
 	*  	\param	[out]	outpV1					- output container of principal curvature value 1. 1D array of size numVerts.
 	*  	\param	[out]	outpV2					- output container of principal curvature value 2. 1D array of size numVerts.
 	*  	\param	[out]	outpD1					- output container of principal curvature direction 1. Collapsed 1D array of size numVerts * 3.
 	*  	\param	[out]	outpD2					- output container of principal curvature direction 2. Collapsed 1D array of size numVerts * 3.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES int curvatureDirections(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outpV1, double* outpV2, double* outpD1, double* outpD2);
+	extern "C" ZSPACE_MODULES bool computeMesh_curvatureDirections( double* outpV1, double* outpV2, double* outpD1, double* outpD2);
 
-	/*! \brief This method computes the gaussian curvature of the input mesh.
+	/*! \brief This method computes the gaussian curvature of the global compute mesh.
 	*
-	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
-	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
-	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
-	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
-	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
-	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
-	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
 	*  	\param	[out]	outGV					- output container of principal curvature value 1. 1D array of size numVerts.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES int gaussianCurvature(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outGV);
+	extern "C" ZSPACE_MODULES bool computeMesh_gaussianCurvature(double* outGV);
 
-	/*! \brief This method computes the mean curvature of the input mesh.
+	/*! \brief This method computes the mean curvature of the global compute mesh.
 	*
-	*	\param	[in]	_vertexPositions		- input container of vertex positions. Collapsed 1D array of size numVerts * 3.
-	*	\param	[in]	_polyCounts				- input container of number of vertices per polygon of the mesh.
-	*	\param	[in]	_polyConnects			- input container of polygon connectivity. Collapsed 1D array of size numFaces * (numVerts per face).
-	* 	\param	[in]	_triCounts				- input container of number of triangles per polygon of the mesh.
-	*	\param	[in]	_triConnects			- input container of triangle connectivity. Collapsed 1D array of size numFaces * (numtriangles per face * 3).
-	* 	\param	[in]	numVerts				- input number of vertices in the mesh.
-	*  	\param	[in]	numFaces				- input number of faces/polygons in the mesh.
 	*  	\param	[out]	outHV					- output container of principal curvature value 1. 1D array of size numVerts.
 	*  	\param	[out]	outHV					- output container of principal curvature value 1. 1D array of size numVerts.
 	*	\since version 0.0.4
 	*/
-	extern "C" ZSPACE_MODULES int meanCurvature(double* _vertexPositions, int* _polyCounts, int* _polyConnects, int* _triCounts, int* _triConnects, int numVerts, int numFaces, double* outHV, double* outHN);
+	extern "C" ZSPACE_MODULES bool computeMesh_meanCurvature(double* outHV, double* outHN);
 
 }
 
